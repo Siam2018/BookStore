@@ -12,5 +12,6 @@ export class CustomerDto {
     
     @IsString()
     password: string;
+    
 
 }

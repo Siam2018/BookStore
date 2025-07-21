@@ -49,4 +49,5 @@ export class CustomerController {
     getFile(@Param('filename') filename, @Res() res) {
         res.sendFile(filename, { root: './uploads' });
     }
+    
 }
