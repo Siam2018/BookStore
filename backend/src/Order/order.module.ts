@@ -7,4 +7,4 @@ import { OrderService } from "./order.service";
     controllers: [OrderController],
     providers: [OrderService]})
 
-export class CustomerModule {}
+export class OrderModule {}
