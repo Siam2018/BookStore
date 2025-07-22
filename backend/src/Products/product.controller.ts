@@ -1,8 +1,11 @@
 import { Controller, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe, Body, UploadedFile, Res } from '@nestjs/common';
 import { Put, Delete } from '@nestjs/common';
 import { ProductService } from './product.service';
+import { ProductDto } from './product.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { MulterError, diskStorage } from 'multer';
+
+
 
 @Controller('products')
 export class ProductController {
@@ -19,10 +22,11 @@ export class ProductController {
   }
 
   @Post('/addproduct')
-  @UsePipes(new ValidationPipe())
-  addProduct(@Body() orderData: any): string {
-    return this.productService.addProduct(productData);
-  }
+      @UsePipes(new ValidationPipe())
+      addProduct(@Body() productData: ProductDto): string {
+          return this.productService.addProduct(productData);
+      }
+  
 
   @Put('/:id')
   updateProduct(@Param('id') id: string, @Body() updateData: any): string {
@@ -34,4 +38,29 @@ export class ProductController {
     return this.productService.deleteProduct(+id);
   }
 
+  @Post('/upload')
+  @UseInterceptors(FileInterceptor('file', {
+    fileFilter: (req, file, cb) => {
+      if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+        cb(null, true);
+      else {
+        cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+      }
+    },
+    limits: { fileSize: 30000 },
+    storage: diskStorage({
+      destination: './uploads',
+      filename: function (req, file, cb) {
+        cb(null, Date.now() + file.originalname)
+      },
+    })
+  }))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return `Uploaded file: ${file.originalname}`;
+  }
+
+  @Get('/getfile/:filename')
+  getFile(@Param('filename') filename, @Res() res) {
+    res.sendFile(filename, { root: './uploads' });
+  }
 }
