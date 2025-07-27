@@ -24,16 +24,46 @@ let CustomerController = class CustomerController {
         this.customerService = customerService;
     }
     findAll() {
-        return 'This action returns all customers';
+        return {
+            message: 'Get all customers',
+            data: [],
+            status: 'success'
+        };
     }
     findOne(id) {
-        return this.customerService.getCustomerById(+id);
+        return {
+            message: `Get customer with ID: ${id}`,
+            data: this.customerService.getCustomerById(id),
+            status: 'success'
+        };
     }
     addCustomer(customerData) {
-        return this.customerService.addCustomer(customerData);
+        return {
+            message: 'Customer added successfully',
+            data: this.customerService.addCustomer(customerData),
+            status: 'success'
+        };
+    }
+    updateCustomer(id, updateData) {
+        return {
+            message: 'Customer updated successfully',
+            data: this.customerService.updateCustomer(id, updateData),
+            status: 'success'
+        };
+    }
+    deleteCustomer(id) {
+        return {
+            message: 'Customer deleted successfully',
+            data: this.customerService.deleteCustomer(id),
+            status: 'success'
+        };
     }
     uploadFile(file) {
-        return `Uploaded file: ${file.originalname}`;
+        return {
+            message: 'File uploaded successfully',
+            data: `Uploaded file: ${file.originalname}`,
+            status: 'success'
+        };
     }
     getFile(filename, res) {
         res.sendFile(filename, { root: './uploads' });
@@ -48,10 +78,10 @@ __decorate([
 ], CustomerController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", String)
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
 ], CustomerController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)('/addcustomer'),
@@ -59,8 +89,24 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [customer_dto_1.CustomerDto]),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", void 0)
 ], CustomerController.prototype, "addCustomer", null);
+__decorate([
+    (0, common_1.Put)('/:id'),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", void 0)
+], CustomerController.prototype, "updateCustomer", null);
+__decorate([
+    (0, common_1.Delete)('/:id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], CustomerController.prototype, "deleteCustomer", null);
 __decorate([
     (0, common_1.Post)('/upload'),
     (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
@@ -71,7 +117,7 @@ __decorate([
                 cb(new multer_1.MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
             }
         },
-        limits: { fileSize: 30000 },
+        limits: { fileSize: 1000000 },
         storage: (0, multer_1.diskStorage)({
             destination: './uploads',
             filename: function (req, file, cb) {
@@ -93,7 +139,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CustomerController.prototype, "getFile", null);
 exports.CustomerController = CustomerController = __decorate([
-    (0, common_1.Controller)('customers'),
+    (0, common_1.Controller)('customer'),
     __metadata("design:paramtypes", [customer_service_1.CustomerService])
 ], CustomerController);
 //# sourceMappingURL=customer.controller.js.map

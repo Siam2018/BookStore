@@ -15,11 +15,14 @@ let CustomerService = class CustomerService {
     getCustomerById(customerId) {
         return `Customer ID: ${customerId}`;
     }
-    createCustomer() {
-        return "Customer created successfully!";
-    }
     addCustomer(customerDto) {
         return `Customer added with name: ${customerDto.name}, email: ${customerDto.email}`;
+    }
+    updateCustomer(id, updateData) {
+        return `Customer ${id} updated with details: ${JSON.stringify(updateData)}`;
+    }
+    deleteCustomer(id) {
+        return `Customer ${id} deleted`;
     }
 };
 exports.CustomerService = CustomerService;
