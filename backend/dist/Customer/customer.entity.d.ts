@@ -4,6 +4,7 @@ export declare class Customer {
     email: string;
     password: string;
     phone: string;
+    imageURL: string;
     address: string;
     city: string;
     postalCode: string;
@@ -11,7 +12,6 @@ export declare class Customer {
     dateOfBirth: Date;
     gender: string;
     isActive: boolean;
-    acceptsMarketing: boolean;
     createdAt: Date;
     updatedAt: Date;
 }

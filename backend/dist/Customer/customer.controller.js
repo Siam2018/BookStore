@@ -38,9 +38,10 @@ let CustomerController = class CustomerController {
         };
     }
     addCustomer(customerData) {
+        const newCustomer = this.customerService.addCustomer(customerData);
         return {
             message: 'Customer added successfully',
-            data: this.customerService.addCustomer(customerData),
+            data: newCustomer,
             status: 'success'
         };
     }
@@ -135,7 +136,7 @@ __decorate([
     __param(0, (0, common_1.Param)('filename')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], CustomerController.prototype, "getFile", null);
 exports.CustomerController = CustomerController = __decorate([

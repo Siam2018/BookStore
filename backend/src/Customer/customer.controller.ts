@@ -43,9 +43,11 @@ export class CustomerController {
     @Post('/addcustomer')
     @UsePipes(new ValidationPipe())
     addCustomer(@Body() customerData: CustomerDto) {
+        const newCustomer = this.customerService.addCustomer(customerData);
+        
         return {
             message: 'Customer added successfully',
-            data: this.customerService.addCustomer(customerData),
+            data: newCustomer,
             status: 'success'
         };
     }
@@ -98,7 +100,7 @@ export class CustomerController {
     }
     
     @Get('/getfile/:filename')
-    getFile(@Param('filename') filename, @Res() res) {
+    getFile(@Param('filename') filename: string, @Res() res) {
         res.sendFile(filename, { root: './uploads' });
     }
 }

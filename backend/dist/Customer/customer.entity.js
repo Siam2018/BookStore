@@ -17,6 +17,7 @@ let Customer = class Customer {
     email;
     password;
     phone;
+    imageURL;
     address;
     city;
     postalCode;
@@ -24,7 +25,6 @@ let Customer = class Customer {
     dateOfBirth;
     gender;
     isActive;
-    acceptsMarketing;
     createdAt;
     updatedAt;
 };
@@ -49,6 +49,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 15, nullable: true }),
     __metadata("design:type", String)
 ], Customer.prototype, "phone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], Customer.prototype, "imageURL", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 200, nullable: true }),
     __metadata("design:type", String)
@@ -77,10 +81,6 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'boolean', default: true }),
     __metadata("design:type", Boolean)
 ], Customer.prototype, "isActive", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
-    __metadata("design:type", Boolean)
-], Customer.prototype, "acceptsMarketing", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

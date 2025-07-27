@@ -17,6 +17,9 @@ export class Customer {
   @Column({ type: 'varchar', length: 15, nullable: true })
   phone: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  imageURL: string;
+
   @Column({ type: 'varchar', length: 200, nullable: true })
   address: string;
 
@@ -37,9 +40,6 @@ export class Customer {
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
-
-  @Column({ type: 'boolean', default: false })
-  acceptsMarketing: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

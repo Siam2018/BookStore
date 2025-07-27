@@ -16,7 +16,23 @@ let CustomerService = class CustomerService {
         return `Customer ID: ${customerId}`;
     }
     addCustomer(customerDto) {
-        return `Customer added with name: ${customerDto.name}, email: ${customerDto.email}`;
+        const newCustomer = {
+            id: Math.floor(Math.random() * 1000) + 1,
+            name: customerDto.name,
+            email: customerDto.email,
+            phone: customerDto.phone || null,
+            imageURL: customerDto.imageURL || null,
+            address: customerDto.address || null,
+            city: customerDto.city || null,
+            postalCode: customerDto.postalCode || null,
+            country: customerDto.country || null,
+            dateOfBirth: customerDto.dateOfBirth || null,
+            gender: customerDto.gender || null,
+            isActive: customerDto.isActive !== undefined ? customerDto.isActive : true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        };
+        return newCustomer;
     }
     updateCustomer(id, updateData) {
         return `Customer ${id} updated with details: ${JSON.stringify(updateData)}`;

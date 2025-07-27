@@ -15,7 +15,7 @@ export declare class CustomerController {
     };
     addCustomer(customerData: CustomerDto): {
         message: string;
-        data: string;
+        data: any;
         status: string;
     };
     updateCustomer(id: number, updateData: Partial<CustomerDto>): {
@@ -33,5 +33,5 @@ export declare class CustomerController {
         data: string;
         status: string;
     };
-    getFile(filename: any, res: any): void;
+    getFile(filename: string, res: any): void;
 }
