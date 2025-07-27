@@ -11,9 +11,9 @@ export class CustomerService {
   }
 
   addCustomer(customerDto: any): any {
-    // Simulate adding customer and return structured data
+
     const newCustomer = {
-      id: Math.floor(Math.random() * 1000) + 1, // Mock ID generation
+      id: Math.floor(Math.random() * 1000) + 1,
       name: customerDto.name,
       email: customerDto.email,
       phone: customerDto.phone || null,
