@@ -8,26 +8,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const customer_module_1 = require("./Customer/customer.module");
 const product_module_1 = require("./Products/product.module");
 const order_module_1 = require("./Order/order.module");
+const admin_module_1 = require("./Admin/admin.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            config_1.ConfigModule.forRoot({
-                isGlobal: true,
-                envFilePath: '.env',
-            }),
-            customer_module_1.CustomerModule,
-            product_module_1.ProductModule,
-            order_module_1.OrderModule
-        ],
+        imports: [customer_module_1.CustomerModule, product_module_1.ProductModule, order_module_1.OrderModule, admin_module_1.AdminModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
