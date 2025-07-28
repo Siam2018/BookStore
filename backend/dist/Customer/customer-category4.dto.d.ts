@@ -1,4 +1,4 @@
-export declare class CustomerDto {
+export declare class CustomerCategory4Dto {
     id?: number;
     name: string;
     email: string;

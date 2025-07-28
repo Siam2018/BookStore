@@ -11,7 +11,6 @@ export class CustomerService {
   }
 
   addCustomer(customerDto: any): any {
-
     const newCustomer = {
       id: Math.floor(Math.random() * 1000) + 1,
       name: customerDto.name,
@@ -25,6 +24,7 @@ export class CustomerService {
       dateOfBirth: customerDto.dateOfBirth || null,
       gender: customerDto.gender || null,
       isActive: customerDto.isActive !== undefined ? customerDto.isActive : true,
+      socialMediaLink: customerDto.socialMediaLink || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };

@@ -9,9 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerDto = void 0;
+exports.CustomerCategory4Dto = void 0;
 const class_validator_1 = require("class-validator");
-class CustomerDto {
+const custom_validators_1 = require("./validators/custom-validators");
+class CustomerCategory4Dto {
     id;
     name;
     email;
@@ -27,79 +28,87 @@ class CustomerDto {
     isActive;
     socialMediaLink;
 }
-exports.CustomerDto = CustomerDto;
+exports.CustomerCategory4Dto = CustomerCategory4Dto;
 __decorate([
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
-], CustomerDto.prototype, "id", void 0);
+], CustomerCategory4Dto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Matches)(/^[a-zA-Z\s]+$/, { message: 'Name should not contain any numbers' }),
+    (0, class_validator_1.MinLength)(2),
+    (0, class_validator_1.MaxLength)(100),
+    (0, custom_validators_1.IsNameWithoutNumbers)(),
     __metadata("design:type", String)
-], CustomerDto.prototype, "name", void 0);
+], CustomerCategory4Dto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CustomerDto.prototype, "email", void 0);
+], CustomerCategory4Dto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.MinLength)(6),
-    (0, class_validator_1.Matches)(/.*[@#$&].*/, { message: 'Password must contain one of the special characters (@ or # or $ or &)' }),
+    (0, custom_validators_1.IsPasswordWithSpecialChar)(),
     __metadata("design:type", String)
-], CustomerDto.prototype, "password", void 0);
+], CustomerCategory4Dto.prototype, "password", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(15),
+    __metadata("design:type", String)
+], CustomerCategory4Dto.prototype, "phone", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CustomerDto.prototype, "phone", void 0);
+], CustomerCategory4Dto.prototype, "imageURL", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
-], CustomerDto.prototype, "imageURL", void 0);
+], CustomerCategory4Dto.prototype, "address", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(100),
     __metadata("design:type", String)
-], CustomerDto.prototype, "address", void 0);
+], CustomerCategory4Dto.prototype, "city", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(20),
     __metadata("design:type", String)
-], CustomerDto.prototype, "city", void 0);
+], CustomerCategory4Dto.prototype, "postalCode", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
-], CustomerDto.prototype, "postalCode", void 0);
+], CustomerCategory4Dto.prototype, "country", void 0);
+__decorate([
+    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CustomerCategory4Dto.prototype, "dateOfBirth", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(10),
     __metadata("design:type", String)
-], CustomerDto.prototype, "country", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsDateString)({}, { message: 'Date of birth must be a valid date string YYYY-MM-DD' }),
-    __metadata("design:type", String)
-], CustomerDto.prototype, "dateOfBirth", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CustomerDto.prototype, "gender", void 0);
+], CustomerCategory4Dto.prototype, "gender", void 0);
 __decorate([
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
-], CustomerDto.prototype, "isActive", void 0);
+], CustomerCategory4Dto.prototype, "isActive", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUrl)({}, { message: 'Social media link must be a valid URL format' }),
+    (0, custom_validators_1.IsValidUrl)(),
     __metadata("design:type", String)
-], CustomerDto.prototype, "socialMediaLink", void 0);
-//# sourceMappingURL=customer.dto.js.map
+], CustomerCategory4Dto.prototype, "socialMediaLink", void 0);
+//# sourceMappingURL=customer-category4.dto.js.map
