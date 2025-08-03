@@ -1,6 +1,6 @@
-export declare class Customer {
+export declare class CustomerEntity {
     id: number;
-    name: string;
+    fullName: string;
     email: string;
     password: string;
     phone: string;
@@ -11,7 +11,7 @@ export declare class Customer {
     country: string;
     dateOfBirth: Date;
     gender: string;
-    isActive: boolean;
+    status: 'active' | 'inactive';
     createdAt: Date;
     updatedAt: Date;
 }

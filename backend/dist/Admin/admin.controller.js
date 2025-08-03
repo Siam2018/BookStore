@@ -1,0 +1,121 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdminController = void 0;
+const common_1 = require("@nestjs/common");
+const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
+const multer_1 = require("multer");
+const admin_service_1 = require("./admin.service");
+const admin_dto_1 = require("./admin.dto");
+let AdminController = class AdminController {
+    adminService;
+    constructor(adminService) {
+        this.adminService = adminService;
+    }
+    findAll() {
+        return this.adminService.getAllAdmins();
+    }
+    findOne(adminId) {
+        return this.adminService.getAdminById(adminId);
+    }
+    addAdmin(adminData) {
+        return this.adminService.addAdmin(adminData);
+    }
+    updateAdmin(adminId, updateData) {
+        return this.adminService.updateAdmin(adminId, updateData);
+    }
+    deleteAdmin(adminId) {
+        return this.adminService.deleteAdmin(adminId);
+    }
+    uploadFile(file) {
+        return `Uploaded file: ${file.originalname}`;
+    }
+    getFile(filename, res) {
+        res.sendFile(filename, { root: './uploads' });
+    }
+};
+exports.AdminController = AdminController;
+__decorate([
+    (0, common_1.Get)('/'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('/:adminId'),
+    __param(0, (0, common_1.Param)('adminId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Post)('/addadmin'),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [admin_dto_1.AdminDto]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "addAdmin", null);
+__decorate([
+    (0, common_1.Put)('/:adminId'),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
+    __param(0, (0, common_1.Param)('adminId', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "updateAdmin", null);
+__decorate([
+    (0, common_1.Delete)('/:adminId'),
+    __param(0, (0, common_1.Param)('adminId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "deleteAdmin", null);
+__decorate([
+    (0, common_1.Post)('/upload'),
+    (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
+        fileFilter: (req, file, cb) => {
+            if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+                cb(null, true);
+            else {
+                cb(new multer_1.MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+            }
+        },
+        limits: { fileSize: 30000 },
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads',
+            filename: function (req, file, cb) {
+                cb(null, Date.now() + file.originalname);
+            },
+        })
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "uploadFile", null);
+__decorate([
+    (0, common_1.Get)('/getfile/:filename'),
+    __param(0, (0, common_1.Param)('filename')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getFile", null);
+exports.AdminController = AdminController = __decorate([
+    (0, common_1.Controller)('admin'),
+    __metadata("design:paramtypes", [admin_service_1.AdminService])
+], AdminController);
+//# sourceMappingURL=admin.controller.js.map

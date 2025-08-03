@@ -1,33 +1,77 @@
 import { CustomerService } from './customer.service';
-import { CustomerDto } from './customer.dto';
+import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 export declare class CustomerController {
     private readonly customerService;
     constructor(customerService: CustomerService);
-    findAll(): {
+    findAll(): Promise<{
         message: string;
-        data: never[];
+        data: import("./customer.entity").CustomerEntity[];
         status: string;
-    };
-    findOne(id: number): {
+    }>;
+    findOne(id: number): Promise<{
         message: string;
-        data: string;
+        data: import("./customer.entity").CustomerEntity;
         status: string;
-    };
-    addCustomer(customerData: CustomerDto): {
+    }>;
+    addCustomer(customerData: CustomerDto): Promise<{
         message: string;
-        data: any;
+        data: import("./customer.entity").CustomerEntity;
         status: string;
-    };
-    updateCustomer(id: number, updateData: Partial<CustomerDto>): {
+    }>;
+    updateCustomerStatus(id: number, statusData: UpdateCustomerStatusDto): Promise<{
         message: string;
-        data: string;
+        data: import("./customer.entity").CustomerEntity;
         status: string;
-    };
-    deleteCustomer(id: number): {
+    }>;
+    getInactiveCustomers(): Promise<{
         message: string;
-        data: string;
+        data: import("./customer.entity").CustomerEntity[];
         status: string;
-    };
+    }>;
+    getActiveCustomers(): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity[];
+        status: string;
+    }>;
+    getCustomersOlderThan(minAge: number): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity[];
+        status: string;
+    }>;
+    getCustomersByAge(minAge: number, maxAge?: string): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity[];
+        status: string;
+    }>;
+    getCustomersByCity(city: string): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity[];
+        status: string;
+    }>;
+    getCustomersByGender(gender: string): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity[];
+        status: string;
+    }>;
+    searchCustomersByName(searchTerm: string): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity[];
+        status: string;
+    }>;
+    toggleCustomerStatus(id: number): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity;
+        status: string;
+    }>;
+    updateCustomer(id: number, updateData: Partial<CustomerDto>): Promise<{
+        message: string;
+        data: import("./customer.entity").CustomerEntity;
+        status: string;
+    }>;
+    deleteCustomer(id: number): Promise<{
+        message: string;
+        status: string;
+    }>;
     uploadFile(file: Express.Multer.File): {
         message: string;
         data: string;
