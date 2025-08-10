@@ -1,18 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
-import { Customer } from '../Customer/customer.entity';
-import { OrderItem } from './order-item.entity';
+import { CustomerEntity } from '../Customer/customer.entity';
+import { OrderItem } from '../OrderItem/orderItem.entity';
 
 @Entity('orders')
-export class Order {
+export class OrderEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'int' })
   customerId: number;
 
-  @ManyToOne(() => Customer, customer => customer.orders)
+  @ManyToOne(() => CustomerEntity, customer => customer.orders)
   @JoinColumn({ name: 'customerId' })
-  customer: Customer;
+  customer: CustomerEntity;
 
   @OneToMany(() => OrderItem, orderItem => orderItem.order, { cascade: true })
   orderItems: OrderItem[];

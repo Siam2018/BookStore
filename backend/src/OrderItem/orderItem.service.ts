@@ -1,35 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateOrderItemDto, UpdateOrderItemDto, OrderItem } from './orderItem.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { OrderItem } from './orderItem.entity';
+import { OrderItemDto } from './orderItem.dto';
 
 @Injectable()
 export class OrderItemService {
-  private items: OrderItem[] = [];
-  private id = 1;
+  constructor(
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
+  ) {}
 
-  findAll() {
-    return this.items;
+  async findAll(): Promise<OrderItem[]> {
+    return this.orderItemRepository.find({ relations: ['order', 'product'] });
   }
 
-  findOne(id: number) {
-    return this.items.find(i => i.id === id);
-  }
-
-  create(dto: CreateOrderItemDto) {
-    const item: OrderItem = { id: this.id++, ...dto };
-    this.items.push(item);
+  async findOne(id: number): Promise<OrderItem> {
+    const item = await this.orderItemRepository.findOne({ where: { id }, relations: ['order', 'product'] });
+    if (!item) throw new NotFoundException('OrderItem not found');
     return item;
   }
 
-  update(id: number, dto: UpdateOrderItemDto) {
-    const idx = this.items.findIndex(i => i.id === id);
-    if (idx === -1) return null;
-    this.items[idx] = { ...this.items[idx], ...dto };
-    return this.items[idx];
+  async create(dto: OrderItemDto): Promise<OrderItem> {
+    const item = this.orderItemRepository.create(dto);
+    return this.orderItemRepository.save(item);
   }
 
-  remove(id: number) {
-    const idx = this.items.findIndex(i => i.id === id);
-    if (idx === -1) return null;
-    return this.items.splice(idx, 1)[0];
+  async update(id: number, dto: Partial<OrderItemDto>): Promise<OrderItem> {
+    const item = await this.findOne(id);
+    Object.assign(item, dto);
+    return this.orderItemRepository.save(item);
+  }
+
+  async remove(id: number): Promise<void> {
+    const item = await this.findOne(id);
+    await this.orderItemRepository.remove(item);
   }
 }

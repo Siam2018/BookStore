@@ -1,4 +1,4 @@
-import {IsString, IsNumber, IsEmail, IsOptional, IsDateString, MinLength, MaxLength, IsBoolean, IsNotEmpty, Matches, IsUrl} from 'class-validator';
+import { IsString, IsNumber, IsEmail, IsOptional, IsDateString, MinLength, MaxLength, IsBoolean, IsNotEmpty, Matches, IsUrl, IsEnum, Min } from 'class-validator';
 
 export class CustomerDto {
     @IsNumber()
@@ -8,7 +8,7 @@ export class CustomerDto {
     @IsString()
     @IsNotEmpty()
     @Matches(/^[a-zA-Z\s]+$/, { message: 'Name should not contain any numbers' })
-    name: string;
+    fullName: string;
 
     @IsEmail()
     @IsNotEmpty()
@@ -38,12 +38,10 @@ export class CustomerDto {
 
     @IsString()
     @IsOptional()
-
     postalCode?: string;
 
     @IsString()
     @IsOptional()
-
     country?: string;
 
     @IsOptional()
@@ -52,16 +50,14 @@ export class CustomerDto {
 
     @IsString()
     @IsOptional()
-
     gender?: string;
 
-    @IsBoolean()
+    @IsEnum(['active', 'inactive'], { message: 'Status must be either active or inactive' })
     @IsOptional()
-    isActive?: boolean;
+    status?: 'active' | 'inactive';
+}
 
-    @IsString()
-    @IsOptional()
-    @IsUrl({}, { message: 'Social media link must be a valid URL format' })
-    socialMediaLink?: string;
-
+export class UpdateCustomerStatusDto {
+    @IsEnum(['active', 'inactive'], { message: 'Status must be either active or inactive' })
+    status: 'active' | 'inactive';
 }

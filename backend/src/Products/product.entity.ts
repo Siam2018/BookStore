@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { OrderItem } from '../Order/order-item.entity';
 
 @Entity('products')
-export class Product {
+export class ProductEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -37,7 +37,7 @@ export class Product {
   isbn: string;
 
   @Column({ type: 'decimal', precision: 8, scale: 2, nullable: true })
-  weight?: number;
+  weight: number;
 
   @CreateDateColumn()
   createdAt: Date;

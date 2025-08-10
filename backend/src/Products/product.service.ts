@@ -1,36 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { Product } from './product.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ProductEntity } from './product.entity';
+import { ProductDto } from './product.dto';
 
 @Injectable()
 export class ProductService {
-  private products: Product[] = [];
-  private id = 1;
+  constructor(
+    @InjectRepository(ProductEntity)
+    private productRepository: Repository<ProductEntity>,
+  ) {}
 
-  findAll() {
-    return this.products;
+  async addProduct(productDto: ProductDto): Promise<ProductEntity> {
+    const product = this.productRepository.create(productDto);
+    return await this.productRepository.save(product);
   }
 
-  findOne(id: number) {
-    return this.products.find(p => p.id === id);
+  async getAllProducts(): Promise<ProductEntity[]> {
+    return await this.productRepository.find();
   }
 
-  create(dto: Partial<Product>) {
-    const product = { ...dto, id: this.id++ } as Product;
-    this.products.push(product);
+  async getProductById(id: number): Promise<ProductEntity> {
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
     return product;
   }
 
-  update(id: number, dto: Partial<Product>) {
-    const idx = this.products.findIndex(p => p.id === id);
-    if (idx === -1) return null;
-    this.products[idx] = { ...this.products[idx], ...dto };
-    return this.products[idx];
+  async updateProduct(id: number, updateData: Partial<ProductDto>): Promise<ProductEntity> {
+    await this.productRepository.update(id, updateData);
+    return this.getProductById(id);
   }
 
-  remove(id: number) {
-    const idx = this.products.findIndex(p => p.id === id);
-    if (idx === -1) return null;
-    return this.products.splice(idx, 1)[0];
+  async deleteProduct(id: number): Promise<boolean> {
+    const result = await this.productRepository.delete(id);
+    return !!result.affected;
   }
 }
 

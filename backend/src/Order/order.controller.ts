@@ -1,38 +1,45 @@
-import { Controller, Get, Param, Post, UsePipes, ValidationPipe, Body, Put, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
+import { Controller, Get, Param, Post, UsePipes, ValidationPipe, Body, Put, Delete, Patch, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { OrderDto } from './order.dto';
-import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 
 @Controller('orders')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('/')
-  findAll() {
-    return 'This action returns all orders';
+  @Get()
+  async findAll() {
+    return await this.orderService.findAll();
+}
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.orderService.findOne(+id);
   }
 
-  @Get('/:orderId')
-  findOne(@Param('orderId') orderId: string): string {
-    return this.orderService.getOrderById(+orderId);
-  }
-
-  @Post('/addorder')
+  @Post()
   @UsePipes(new ValidationPipe())
-  addOrder(@Body() orderData: OrderDto): string {
-    return this.orderService.addOrder(orderData);
+  async create(@Body() dto: OrderDto) {
+    return await this.orderService.create(dto);
   }
 
-  @Put('/:orderId')
+  @Put(':id')
   @UsePipes(new ValidationPipe())
-  updateOrder(@Param('orderId') orderId: string, @Body() updateData: OrderDto): string {
-    return this.orderService.updateOrder(+orderId, updateData);
+  async update(@Param('id') id: string, @Body() dto: OrderDto) {
+    return await this.orderService.update(+id, dto);
   }
 
-  @Delete('/:orderId')
-  deleteOrder(@Param('orderId') orderId: string): string {
-    return this.orderService.deleteOrder(+orderId);
+  @Patch(':id')
+  @UsePipes(new ValidationPipe({ skipMissingProperties: true }))
+  async patch(@Param('id') id: string, @Body() dto: Partial<OrderDto>) {
+    return await this.orderService.update(+id, dto);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.orderService.remove(+id);
+    return { message: 'Order deleted successfully' };
   }
 
   @Post('/upload')

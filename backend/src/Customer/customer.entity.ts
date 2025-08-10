@@ -1,13 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Order } from '../Order/order.entity';
+import { OrderEntity } from '../Order/order.entity';
 
 @Entity('customers')
-export class Customer {
-  @PrimaryGeneratedColumn()
+export class CustomerEntity {
+
+  @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
 
   @Column({ type: 'varchar', length: 100 })
-  name: string;
+  fullName: string;
 
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
@@ -39,15 +40,20 @@ export class Customer {
   @Column({ type: 'varchar', length: 10, nullable: true })
   gender: string;
 
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
+
+  @Column({ 
+    type: 'enum', 
+    enum: ['active', 'inactive'], 
+    default: 'active' 
+  })
+  status: 'active' | 'inactive';
+
+  @OneToMany(() => OrderEntity, order => order.customer)
+  orders: OrderEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToMany(() => Order, order => order.customer)
-  orders: Order[];
 }

@@ -1,27 +1,29 @@
-import { IsString, IsNumber, IsArray, IsDateString } from "class-validator";
+import { IsNumber, IsString, IsArray, IsDateString, IsOptional, IsDecimal, IsPositive } from 'class-validator';
 
 export class OrderDto {
     @IsNumber()
-    id: number;
-
-    @IsString()
-    name: string;
-
-    @IsString()
-    details: string;
+    @IsOptional()
+    id?: number;
 
     @IsNumber()
     customerId: number;
 
     @IsArray()
-    productIds: number[];
+    @IsOptional()
+    orderItems?: number[];
 
-    @IsNumber()
-    totalAmount: number;
-
-    @IsDateString()
-    orderDate: string;
+    @IsDecimal({ decimal_digits: '0,2' })
+    @IsPositive()
+    total: number;
 
     @IsString()
     status: string;
+
+    @IsDateString()
+    @IsOptional()
+    createdAt?: string;
+
+    @IsDateString()
+    @IsOptional()
+    updatedAt?: string;
 }
