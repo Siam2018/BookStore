@@ -14,11 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
 const common_1 = require("@nestjs/common");
-<<<<<<< HEAD
-const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
-=======
 const platform_express_1 = require("@nestjs/platform-express");
->>>>>>> main
 const multer_1 = require("multer");
 const admin_service_1 = require("./admin.service");
 const admin_dto_1 = require("./admin.dto");
@@ -27,28 +23,6 @@ let AdminController = class AdminController {
     constructor(adminService) {
         this.adminService = adminService;
     }
-<<<<<<< HEAD
-    findAll() {
-        return this.adminService.getAllAdmins();
-    }
-    findOne(adminId) {
-        return this.adminService.getAdminById(adminId);
-    }
-    addAdmin(adminData) {
-        return this.adminService.addAdmin(adminData);
-    }
-    updateAdmin(adminId, updateData) {
-        return this.adminService.updateAdmin(adminId, updateData);
-    }
-    deleteAdmin(adminId) {
-        return this.adminService.deleteAdmin(adminId);
-    }
-    uploadFile(file) {
-        return `Uploaded file: ${file.originalname}`;
-    }
-    getFile(filename, res) {
-        res.sendFile(filename, { root: './uploads' });
-=======
     async create(dto) {
         return this.adminService.createAdmin(dto);
     }
@@ -80,56 +54,15 @@ let AdminController = class AdminController {
     }
     getFile(filename, res) {
         return res.sendFile(filename, { root: './uploads' });
->>>>>>> main
     }
 };
 exports.AdminController = AdminController;
 __decorate([
-<<<<<<< HEAD
-    (0, common_1.Get)('/'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AdminController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)('/:adminId'),
-    __param(0, (0, common_1.Param)('adminId', common_1.ParseIntPipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], AdminController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Post)('/addadmin'),
-=======
     (0, common_1.Post)(),
->>>>>>> main
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [admin_dto_1.AdminDto]),
-<<<<<<< HEAD
-    __metadata("design:returntype", void 0)
-], AdminController.prototype, "addAdmin", null);
-__decorate([
-    (0, common_1.Put)('/:adminId'),
-    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
-    __param(0, (0, common_1.Param)('adminId', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", void 0)
-], AdminController.prototype, "updateAdmin", null);
-__decorate([
-    (0, common_1.Delete)('/:adminId'),
-    __param(0, (0, common_1.Param)('adminId', common_1.ParseIntPipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], AdminController.prototype, "deleteAdmin", null);
-__decorate([
-    (0, common_1.Post)('/upload'),
-    (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
-=======
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "create", null);
 __decorate([
@@ -179,27 +112,18 @@ __decorate([
 __decorate([
     (0, common_1.Post)('upload'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
->>>>>>> main
         fileFilter: (req, file, cb) => {
             if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
                 cb(null, true);
             else {
-<<<<<<< HEAD
-                cb(new multer_1.MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-=======
                 cb(new Error('LIMIT_UNEXPECTED_FILE'), false);
->>>>>>> main
             }
         },
         limits: { fileSize: 30000 },
         storage: (0, multer_1.diskStorage)({
             destination: './uploads',
             filename: function (req, file, cb) {
-<<<<<<< HEAD
-                cb(null, Date.now() + file.originalname);
-=======
                 cb(null, Date.now() + '-' + file.originalname);
->>>>>>> main
             },
         })
     })),
@@ -209,19 +133,11 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "uploadFile", null);
 __decorate([
-<<<<<<< HEAD
-    (0, common_1.Get)('/getfile/:filename'),
-    __param(0, (0, common_1.Param)('filename')),
-    __param(1, (0, common_1.Res)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-=======
     (0, common_1.Get)('getfile/:filename'),
     __param(0, (0, common_1.Param)('filename')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
->>>>>>> main
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "getFile", null);
 exports.AdminController = AdminController = __decorate([
