@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Order } from '../Order/order.entity';
 
 @Entity('customers')
 export class Customer {
@@ -46,4 +47,7 @@ export class Customer {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Order, order => order.customer)
+  orders: Order[];
 }

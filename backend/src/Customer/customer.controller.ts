@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe} from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { CustomerDto } from './customer.dto';
@@ -9,28 +9,29 @@ export class CustomerController {
     constructor(private readonly customerService: CustomerService) { }
 
     @Get('/')
-    findAll() {
+    async findAll() {
+        const data = await this.customerService.findAll();
         return {
             message: 'Get all customers',
-            data: [],
+            data,
             status: 'success'
         };
     }
 
     @Get('/:id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        const data = await this.customerService.getCustomerById(id);
         return {
             message: `Get customer with ID: ${id}`,
-            data: this.customerService.getCustomerById(id),
+            data,
             status: 'success'
         };
     }
 
     @Post('/addcustomer')
     @UsePipes(new ValidationPipe())
-    addCustomer(@Body() customerData: CustomerDto) {
-        const newCustomer = this.customerService.addCustomer(customerData);
-        
+    async addCustomer(@Body() customerData: CustomerDto) {
+        const newCustomer = await this.customerService.addCustomer(customerData);
         return {
             message: 'Customer added successfully',
             data: newCustomer,
@@ -40,22 +41,24 @@ export class CustomerController {
 
     @Put('/:id')
     @UsePipes(new ValidationPipe())
-    updateCustomer(
+    async updateCustomer(
         @Param('id', ParseIntPipe) id: number, 
         @Body() updateData: Partial<CustomerDto>
     ) {
+        const updated = await this.customerService.updateCustomer(id, updateData);
         return {
             message: 'Customer updated successfully',
-            data: this.customerService.updateCustomer(id, updateData),
+            data: updated,
             status: 'success'
         };
     }
 
     @Delete('/:id')
-    deleteCustomer(@Param('id', ParseIntPipe) id: number) {
+    async deleteCustomer(@Param('id', ParseIntPipe) id: number) {
+        const deleted = await this.customerService.deleteCustomer(id);
         return {
             message: 'Customer deleted successfully',
-            data: this.customerService.deleteCustomer(id),
+            data: deleted,
             status: 'success'
         };
     }

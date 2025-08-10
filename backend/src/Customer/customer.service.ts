@@ -1,42 +1,36 @@
 import { Injectable } from "@nestjs/common";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Customer } from './customer.entity';
+import { CustomerDto } from './customer.dto';
 
 @Injectable()
 export class CustomerService {
-  getCustomer(): string {
-    return "Hello Customer!";
+  constructor(
+    @InjectRepository(Customer)
+    private readonly customerRepository: Repository<Customer>
+  ) {}
+
+  async findAll(): Promise<Customer[]> {
+    return this.customerRepository.find();
   }
 
-  getCustomerById(customerId: number): string {
-    return `Customer ID: ${customerId}`;
+  async getCustomerById(id: number): Promise<Customer | null> {
+    return this.customerRepository.findOne({ where: { id } });
   }
 
-  addCustomer(customerDto: any): any {
-    const newCustomer = {
-      id: Math.floor(Math.random() * 1000) + 1,
-      name: customerDto.name,
-      email: customerDto.email,
-      phone: customerDto.phone || null,
-      imageURL: customerDto.imageURL || null,
-      address: customerDto.address || null,
-      city: customerDto.city || null,
-      postalCode: customerDto.postalCode || null,
-      country: customerDto.country || null,
-      dateOfBirth: customerDto.dateOfBirth || null,
-      gender: customerDto.gender || null,
-      isActive: customerDto.isActive !== undefined ? customerDto.isActive : true,
-      socialMediaLink: customerDto.socialMediaLink || null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    return newCustomer;
+  async addCustomer(customerDto: CustomerDto): Promise<Customer> {
+    const customer = this.customerRepository.create(customerDto);
+    return this.customerRepository.save(customer);
   }
 
-  updateCustomer(id: number, updateData: any): string {
-    return `Customer ${id} updated with details: ${JSON.stringify(updateData)}`;
+  async updateCustomer(id: number, updateData: Partial<CustomerDto>): Promise<Customer | null> {
+    await this.customerRepository.update(id, updateData);
+    return this.getCustomerById(id);
   }
 
-  deleteCustomer(id: number): string {
-    return `Customer ${id} deleted`;
+  async deleteCustomer(id: number): Promise<boolean> {
+    const result = await this.customerRepository.delete(id);
+    return result.affected > 0;
   }
 }
