@@ -9,11 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerDto = void 0;
+exports.UpdateCustomerStatusDto = exports.CustomerDto = void 0;
 const class_validator_1 = require("class-validator");
 class CustomerDto {
     id;
-    name;
+    fullName;
     email;
     password;
     phone;
@@ -24,8 +24,7 @@ class CustomerDto {
     country;
     dateOfBirth;
     gender;
-    isActive;
-    socialMediaLink;
+    status;
 }
 exports.CustomerDto = CustomerDto;
 __decorate([
@@ -38,7 +37,7 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.Matches)(/^[a-zA-Z\s]+$/, { message: 'Name should not contain any numbers' }),
     __metadata("design:type", String)
-], CustomerDto.prototype, "name", void 0);
+], CustomerDto.prototype, "fullName", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -92,14 +91,16 @@ __decorate([
     __metadata("design:type", String)
 ], CustomerDto.prototype, "gender", void 0);
 __decorate([
-    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsEnum)(['active', 'inactive'], { message: 'Status must be either active or inactive' }),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Boolean)
-], CustomerDto.prototype, "isActive", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUrl)({}, { message: 'Social media link must be a valid URL format' }),
     __metadata("design:type", String)
-], CustomerDto.prototype, "socialMediaLink", void 0);
+], CustomerDto.prototype, "status", void 0);
+class UpdateCustomerStatusDto {
+    status;
+}
+exports.UpdateCustomerStatusDto = UpdateCustomerStatusDto;
+__decorate([
+    (0, class_validator_1.IsEnum)(['active', 'inactive'], { message: 'Status must be either active or inactive' }),
+    __metadata("design:type", String)
+], UpdateCustomerStatusDto.prototype, "status", void 0);
 //# sourceMappingURL=customer.dto.js.map

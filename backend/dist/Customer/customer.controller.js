@@ -23,51 +23,137 @@ let CustomerController = class CustomerController {
     constructor(customerService) {
         this.customerService = customerService;
     }
-    findAll() {
+    async findAll() {
+        const customers = await this.customerService.getAllCustomers();
         return {
             message: 'Get all customers',
-            data: [],
+            data: customers,
             status: 'success'
         };
     }
-    findOne(id) {
+    async findOne(id) {
+        const customer = await this.customerService.getCustomerById(id);
         return {
             message: `Get customer with ID: ${id}`,
-            data: this.customerService.getCustomerById(id),
+            data: customer,
             status: 'success'
         };
     }
-    addCustomer(customerData) {
-        const newCustomer = this.customerService.addCustomer(customerData);
+    async addCustomer(customerData) {
+        const newCustomer = await this.customerService.addCustomer(customerData);
         return {
             message: 'Customer added successfully',
             data: newCustomer,
             status: 'success'
         };
     }
-    updateCustomer(id, updateData) {
+    async updateCustomerStatus(id, statusData) {
+        const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
+        return {
+            message: 'Customer status updated successfully',
+            data: updatedCustomer,
+            status: 'success'
+        };
+    }
+    async getInactiveCustomers() {
+        const inactiveCustomers = await this.customerService.getInactiveCustomers();
+        return {
+            message: 'Retrieved inactive customers',
+            data: inactiveCustomers,
+            status: 'success'
+        };
+    }
+    async getActiveCustomers() {
+        const activeCustomers = await this.customerService.getActiveCustomers();
+        return {
+            message: 'Retrieved active customers',
+            data: activeCustomers,
+            status: 'success'
+        };
+    }
+    async getCustomersOlderThan(minAge) {
+        const customers = await this.customerService.getCustomersOlderThan(minAge);
+        return {
+            message: `Retrieved customers older than ${minAge}`,
+            data: customers,
+            status: 'success'
+        };
+    }
+    async getCustomersByAge(minAge, maxAge) {
+        const customers = await this.customerService.getCustomersByAge(minAge, maxAge ? parseInt(maxAge) : undefined);
+        return {
+            message: `Retrieved customers by age range`,
+            data: customers,
+            status: 'success'
+        };
+    }
+    async getCustomersByCity(city) {
+        const customers = await this.customerService.getCustomersByCity(city);
+        return {
+            message: `Retrieved customers from city: ${city}`,
+            data: customers,
+            status: 'success'
+        };
+    }
+    async getCustomersByGender(gender) {
+        const customers = await this.customerService.getCustomersByGender(gender);
+        return {
+            message: `Retrieved customers by gender: ${gender}`,
+            data: customers,
+            status: 'success'
+        };
+    }
+    async searchCustomersByName(searchTerm) {
+        const customers = await this.customerService.searchCustomersByName(searchTerm);
+        return {
+            message: `Search results for: ${searchTerm}`,
+            data: customers,
+            status: 'success'
+        };
+    }
+    async toggleCustomerStatus(id) {
+        const customer = await this.customerService.toggleCustomerStatus(id);
+        return {
+            message: 'Customer status toggled successfully',
+            data: customer,
+            status: 'success'
+        };
+    }
+    async updateCustomer(id, updateData) {
+        const updatedCustomer = await this.customerService.updateCustomer(id, updateData);
         return {
             message: 'Customer updated successfully',
-            data: this.customerService.updateCustomer(id, updateData),
+            data: updatedCustomer,
             status: 'success'
         };
     }
-    deleteCustomer(id) {
+    async deleteCustomer(id) {
+        await this.customerService.deleteCustomer(id);
         return {
             message: 'Customer deleted successfully',
-            data: this.customerService.deleteCustomer(id),
             status: 'success'
         };
     }
-    uploadFile(file) {
+    async uploadImage(id, file) {
+        if (!file) {
+            return { message: 'No file uploaded', status: 'error' };
+        }
+        const imageURL = `/uploads/customers/${file.filename}`;
+        const updated = await this.customerService.updateCustomerImage(id, imageURL);
         return {
-            message: 'File uploaded successfully',
-            data: `Uploaded file: ${file.originalname}`,
-            status: 'success'
+            message: 'Customer image uploaded successfully',
+            data: updated,
+            status: 'success',
+            imageURL,
         };
     }
-    getFile(filename, res) {
-        res.sendFile(filename, { root: './uploads' });
+    async getCustomerImage(id, res) {
+        const imagePath = await this.customerService.getCustomerImagePath(id);
+        if (!imagePath) {
+            return res.status(404).json({ message: 'No image found for this customer.' });
+        }
+        const normalizedPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+        return res.sendFile(normalizedPath, { root: './' });
     }
 };
 exports.CustomerController = CustomerController;
@@ -75,14 +161,14 @@ __decorate([
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)('/addcustomer'),
@@ -90,8 +176,72 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [customer_dto_1.CustomerDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "addCustomer", null);
+__decorate([
+    (0, common_1.Put)('/:id/status'),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, customer_dto_1.UpdateCustomerStatusDto]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "updateCustomerStatus", null);
+__decorate([
+    (0, common_1.Get)('/status/inactive'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getInactiveCustomers", null);
+__decorate([
+    (0, common_1.Get)('/status/active'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getActiveCustomers", null);
+__decorate([
+    (0, common_1.Get)('/age/older-than/:minAge'),
+    __param(0, (0, common_1.Param)('minAge', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getCustomersOlderThan", null);
+__decorate([
+    (0, common_1.Get)('/age/range'),
+    __param(0, (0, common_1.Query)('minAge', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)('maxAge')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getCustomersByAge", null);
+__decorate([
+    (0, common_1.Get)('/city/:city'),
+    __param(0, (0, common_1.Param)('city')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getCustomersByCity", null);
+__decorate([
+    (0, common_1.Get)('/gender/:gender'),
+    __param(0, (0, common_1.Param)('gender')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getCustomersByGender", null);
+__decorate([
+    (0, common_1.Get)('/search/:searchTerm'),
+    __param(0, (0, common_1.Param)('searchTerm')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "searchCustomersByName", null);
+__decorate([
+    (0, common_1.Put)('/:id/toggle-status'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "toggleCustomerStatus", null);
 __decorate([
     (0, common_1.Put)('/:id'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
@@ -99,46 +249,49 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "updateCustomer", null);
 __decorate([
     (0, common_1.Delete)('/:id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "deleteCustomer", null);
 __decorate([
-    (0, common_1.Post)('/upload'),
+    (0, common_1.Patch)('/:id/image'),
     (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/customers',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                cb(null, uniqueSuffix + '-' + file.originalname);
+            },
+        }),
         fileFilter: (req, file, cb) => {
-            if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+            if (file.mimetype.match(/^image\/(jpg|jpeg|png|webp)$/)) {
                 cb(null, true);
+            }
             else {
-                cb(new multer_1.MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+                cb(new Error('Only image files are allowed!'), false);
             }
         },
-        limits: { fileSize: 1000000 },
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: function (req, file, cb) {
-                cb(null, Date.now() + file.originalname);
-            },
-        })
+        limits: { fileSize: 2 * 1024 * 1024 },
     })),
-    __param(0, (0, common_1.UploadedFile)()),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], CustomerController.prototype, "uploadFile", null);
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "uploadImage", null);
 __decorate([
-    (0, common_1.Get)('/getfile/:filename'),
-    __param(0, (0, common_1.Param)('filename')),
+    (0, common_1.Get)('/:id/image'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
-], CustomerController.prototype, "getFile", null);
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "getCustomerImage", null);
 exports.CustomerController = CustomerController = __decorate([
     (0, common_1.Controller)('customer'),
     __metadata("design:paramtypes", [customer_service_1.CustomerService])

@@ -1,10 +1,18 @@
-export declare class Product {
+import { OrderItem } from '../OrderItem/orderItem.entity';
+export declare class ProductEntity {
     id: number;
     name: string;
     description: string;
     price: number;
     stock: number;
     category: string;
+    imageURL: string;
+    isActive: boolean;
+    author: string;
+    publisher: string;
+    isbn: string;
+    weight: number;
     createdAt: Date;
     updatedAt: Date;
+    orderItems: OrderItem[];
 }

@@ -11,6 +11,12 @@ export class ProductService {
     private productRepository: Repository<ProductEntity>,
   ) {}
 
+  // Get product image path by ID
+  async getProductImagePath(id: number): Promise<string | null> {
+    const product = await this.getProductById(id);
+    return product.imageURL || null;
+  }
+
   async addProduct(productDto: ProductDto): Promise<ProductEntity> {
     const product = this.productRepository.create(productDto);
     return await this.productRepository.save(product);

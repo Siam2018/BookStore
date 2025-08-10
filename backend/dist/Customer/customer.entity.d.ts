@@ -1,6 +1,7 @@
-export declare class Customer {
+import { OrderEntity } from '../Order/order.entity';
+export declare class CustomerEntity {
     id: number;
-    name: string;
+    fullName: string;
     email: string;
     password: string;
     phone: string;
@@ -11,7 +12,8 @@ export declare class Customer {
     country: string;
     dateOfBirth: Date;
     gender: string;
-    isActive: boolean;
+    status: 'active' | 'inactive';
+    orders: OrderEntity[];
     createdAt: Date;
     updatedAt: Date;
 }

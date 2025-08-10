@@ -12,45 +12,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminDto = void 0;
 const class_validator_1 = require("class-validator");
 class AdminDto {
-<<<<<<< HEAD
-    name;
-    email;
-    password;
-    gender;
-    phone;
-=======
     username;
     fullName;
     password;
->>>>>>> main
+    name;
+    email;
+    adminPassword;
+    gender;
+    phone;
 }
 exports.AdminDto = AdminDto;
 __decorate([
     (0, class_validator_1.IsString)(),
-<<<<<<< HEAD
-    __metadata("design:type", String)
-], AdminDto.prototype, "name", void 0);
-__decorate([
-    (0, class_validator_1.IsEmail)({}, { message: 'email must be a valid email address' }),
-    (0, class_validator_1.Matches)(/^[\w.-]+@aiub\.edu$/, { message: 'Email must contain aiub.edu' }),
-    __metadata("design:type", String)
-], AdminDto.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(6, { message: 'Password must be at least 6 characters long' }),
-    (0, class_validator_1.Matches)(/^(?=.*[A-Z]).+$/, { message: 'Password must contain at least one uppercase character' }),
-    __metadata("design:type", String)
-], AdminDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['male', 'female'], { message: 'invlid gender' }),
-    __metadata("design:type", String)
-], AdminDto.prototype, "gender", void 0);
-__decorate([
-    (0, class_validator_1.Matches)(/^\d+$/, { message: 'Phone number must contain only numbers' }),
-    __metadata("design:type", String)
-], AdminDto.prototype, "phone", void 0);
-=======
     (0, class_validator_1.IsNotEmpty)({ message: 'Username cannot be empty' }),
     (0, class_validator_1.MaxLength)(100),
     __metadata("design:type", String)
@@ -67,5 +40,29 @@ __decorate([
     (0, class_validator_1.MinLength)(6),
     __metadata("design:type", String)
 ], AdminDto.prototype, "password", void 0);
->>>>>>> main
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Name cannot be empty' }),
+    __metadata("design:type", String)
+], AdminDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsEmail)({}, { message: 'Email must be a valid email address' }),
+    (0, class_validator_1.Matches)(/^[\w.-]+@aiub\.edu$/, { message: 'Email must contain aiub.edu' }),
+    __metadata("design:type", String)
+], AdminDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(6, { message: 'Password must be at least 6 characters long' }),
+    (0, class_validator_1.Matches)(/^(?=.*[A-Z]).+$/, { message: 'Password must contain at least one uppercase character' }),
+    __metadata("design:type", String)
+], AdminDto.prototype, "adminPassword", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(['male', 'female'], { message: 'Invalid gender' }),
+    __metadata("design:type", String)
+], AdminDto.prototype, "gender", void 0);
+__decorate([
+    (0, class_validator_1.Matches)(/^\d+$/, { message: 'Phone number must contain only numbers' }),
+    __metadata("design:type", String)
+], AdminDto.prototype, "phone", void 0);
 //# sourceMappingURL=admin.dto.js.map

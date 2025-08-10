@@ -13,45 +13,45 @@ exports.OrderDto = void 0;
 const class_validator_1 = require("class-validator");
 class OrderDto {
     id;
-    name;
-    details;
     customerId;
-    productIds;
-    totalAmount;
-    orderDate;
+    orderItems;
+    total;
     status;
+    createdAt;
+    updatedAt;
 }
 exports.OrderDto = OrderDto;
 __decorate([
     (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], OrderDto.prototype, "id", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], OrderDto.prototype, "name", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], OrderDto.prototype, "details", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], OrderDto.prototype, "customerId", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
-], OrderDto.prototype, "productIds", void 0);
+], OrderDto.prototype, "orderItems", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsDecimal)({ decimal_digits: '0,2' }),
+    (0, class_validator_1.IsPositive)(),
     __metadata("design:type", Number)
-], OrderDto.prototype, "totalAmount", void 0);
-__decorate([
-    (0, class_validator_1.IsDateString)(),
-    __metadata("design:type", String)
-], OrderDto.prototype, "orderDate", void 0);
+], OrderDto.prototype, "total", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], OrderDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], OrderDto.prototype, "createdAt", void 0);
+__decorate([
+    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], OrderDto.prototype, "updatedAt", void 0);
 //# sourceMappingURL=order.dto.js.map

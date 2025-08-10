@@ -1,4 +1,3 @@
-// ...existing code...
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,6 +10,12 @@ export class CustomerService {
     @InjectRepository(CustomerEntity)
     private customerRepository: Repository<CustomerEntity>,
   ) {}
+
+  // Get customer image path by ID
+  async getCustomerImagePath(id: number): Promise<string | null> {
+    const customer = await this.getCustomerById(id);
+    return customer.imageURL || null;
+  }
 
   // Create a customer (includes User Category 1 Operation 1: Create a user)
   async addCustomer(customerDto: CustomerDto): Promise<CustomerEntity> {

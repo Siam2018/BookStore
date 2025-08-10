@@ -7,7 +7,6 @@ import { MulterError, diskStorage } from 'multer';
 @Controller('customer')
 export class CustomerController {
     constructor(private readonly customerService: CustomerService) { }
-
     // Get all customers
     @Get('/')
     async findAll() {
@@ -210,8 +209,14 @@ export class CustomerController {
         };
     }
 
-    @Get('/getfile/:filename')
-    getFile(@Param('filename') filename: string, @Res() res) {
-        res.sendFile(filename, { root: './uploads' });
+    @Get('/:id/image')
+    async getCustomerImage(@Param('id', ParseIntPipe) id: number, @Res() res) {
+        const imagePath = await this.customerService.getCustomerImagePath(id);
+        if (!imagePath) {
+            return res.status(404).json({ message: 'No image found for this customer.' });
+        }
+        // Remove leading slash if present
+        const normalizedPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+        return res.sendFile(normalizedPath, { root: './' });
     }
 }

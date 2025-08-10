@@ -1,7 +1,12 @@
+import { Repository } from 'typeorm';
+import { OrderEntity } from './order.entity';
+import { OrderDto } from './order.dto';
 export declare class OrderService {
-    getOrder(): string;
-    getOrderById(orderid: number): string;
-    addOrder(orderData: any): string;
-    updateOrder(id: number, updateData: any): string;
-    deleteOrder(id: number): string;
+    private readonly orderRepository;
+    constructor(orderRepository: Repository<OrderEntity>);
+    findAll(): Promise<OrderEntity[]>;
+    findOne(id: number): Promise<OrderEntity>;
+    create(dto: OrderDto): Promise<OrderEntity>;
+    update(id: number, dto: Partial<OrderDto>): Promise<OrderEntity>;
+    remove(id: number): Promise<void>;
 }

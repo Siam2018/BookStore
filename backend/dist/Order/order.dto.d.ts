@@ -1,10 +1,9 @@
 export declare class OrderDto {
-    id: number;
-    name: string;
-    details: string;
+    id?: number;
     customerId: number;
-    productIds: number[];
-    totalAmount: number;
-    orderDate: string;
+    orderItems?: number[];
+    total: number;
     status: string;
+    createdAt?: string;
+    updatedAt?: string;
 }

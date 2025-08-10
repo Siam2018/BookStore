@@ -5,26 +5,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-<<<<<<< HEAD
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminService = void 0;
-const common_1 = require("@nestjs/common");
-let AdminService = class AdminService {
-    getAllAdmins() {
-        return 'This action returns all admins';
-    }
-    getAdminById(adminId) {
-        return `Admin ID: ${adminId}`;
-    }
-    addAdmin(adminData) {
-        return `Admin added with name: ${adminData.name}, email: ${adminData.email}`;
-    }
-    updateAdmin(adminId, updateData) {
-        return `Admin ${adminId} updated with details: ${JSON.stringify(updateData)}`;
-    }
-    deleteAdmin(adminId) {
-        return `Admin ${adminId} deleted`;
-=======
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -73,17 +53,12 @@ let AdminService = class AdminService {
     }
     async deleteByUsername(username) {
         await this.adminRepository.delete({ username });
->>>>>>> main
     }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([
-<<<<<<< HEAD
-    (0, common_1.Injectable)()
-=======
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(admin_entity_1.AdminEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
->>>>>>> main
 ], AdminService);
 //# sourceMappingURL=admin.service.js.map

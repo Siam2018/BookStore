@@ -16,27 +16,31 @@ exports.OrderController = void 0;
 const common_1 = require("@nestjs/common");
 const order_service_1 = require("./order.service");
 const order_dto_1 = require("./order.dto");
-const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
+const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 let OrderController = class OrderController {
     orderService;
     constructor(orderService) {
         this.orderService = orderService;
     }
-    findAll() {
-        return 'This action returns all orders';
+    async findAll() {
+        return await this.orderService.findAll();
     }
-    findOne(orderId) {
-        return this.orderService.getOrderById(+orderId);
+    async findOne(id) {
+        return await this.orderService.findOne(+id);
     }
-    addOrder(orderData) {
-        return this.orderService.addOrder(orderData);
+    async create(dto) {
+        return await this.orderService.create(dto);
     }
-    updateOrder(orderId, updateData) {
-        return this.orderService.updateOrder(+orderId, updateData);
+    async update(id, dto) {
+        return await this.orderService.update(+id, dto);
     }
-    deleteOrder(orderId) {
-        return this.orderService.deleteOrder(+orderId);
+    async patch(id, dto) {
+        return await this.orderService.update(+id, dto);
+    }
+    async remove(id) {
+        await this.orderService.remove(+id);
+        return { message: 'Order deleted successfully' };
     }
     uploadFile(file) {
         return `Uploaded file: ${file.originalname}`;
@@ -47,45 +51,54 @@ let OrderController = class OrderController {
 };
 exports.OrderController = OrderController;
 __decorate([
-    (0, common_1.Get)('/'),
+    (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)('/:orderId'),
-    __param(0, (0, common_1.Param)('orderId')),
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Post)('/addorder'),
+    (0, common_1.Post)(),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [order_dto_1.OrderDto]),
-    __metadata("design:returntype", String)
-], OrderController.prototype, "addOrder", null);
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "create", null);
 __decorate([
-    (0, common_1.Put)('/:orderId'),
+    (0, common_1.Put)(':id'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
-    __param(0, (0, common_1.Param)('orderId')),
+    __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, order_dto_1.OrderDto]),
-    __metadata("design:returntype", String)
-], OrderController.prototype, "updateOrder", null);
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)('/:orderId'),
-    __param(0, (0, common_1.Param)('orderId')),
+    (0, common_1.Patch)(':id'),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe({ skipMissingProperties: true })),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "patch", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", String)
-], OrderController.prototype, "deleteOrder", null);
+    __metadata("design:returntype", Promise)
+], OrderController.prototype, "remove", null);
 __decorate([
     (0, common_1.Post)('/upload'),
-    (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         fileFilter: (req, file, cb) => {
             if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
                 cb(null, true);

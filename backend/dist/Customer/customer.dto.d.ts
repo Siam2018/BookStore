@@ -1,6 +1,6 @@
 export declare class CustomerDto {
     id?: number;
-    name: string;
+    fullName: string;
     email: string;
     password: string;
     phone?: string;
@@ -11,6 +11,8 @@ export declare class CustomerDto {
     country?: string;
     dateOfBirth?: string;
     gender?: string;
-    isActive?: boolean;
-    socialMediaLink?: string;
+    status?: 'active' | 'inactive';
+}
+export declare class UpdateCustomerStatusDto {
+    status: 'active' | 'inactive';
 }

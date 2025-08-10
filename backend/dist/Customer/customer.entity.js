@@ -9,11 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Customer = void 0;
+exports.CustomerEntity = void 0;
 const typeorm_1 = require("typeorm");
-let Customer = class Customer {
+const order_entity_1 = require("../Order/order.entity");
+let CustomerEntity = class CustomerEntity {
     id;
-    name;
+    fullName;
     email;
     password;
     phone;
@@ -24,72 +25,81 @@ let Customer = class Customer {
     country;
     dateOfBirth;
     gender;
-    isActive;
+    status;
+    orders;
     createdAt;
     updatedAt;
 };
-exports.Customer = Customer;
+exports.CustomerEntity = CustomerEntity;
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    (0, typeorm_1.PrimaryGeneratedColumn)({ type: 'int', unsigned: true }),
     __metadata("design:type", Number)
-], Customer.prototype, "id", void 0);
+], CustomerEntity.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 100 }),
     __metadata("design:type", String)
-], Customer.prototype, "name", void 0);
+], CustomerEntity.prototype, "fullName", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255, unique: true }),
     __metadata("design:type", String)
-], Customer.prototype, "email", void 0);
+], CustomerEntity.prototype, "email", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
     __metadata("design:type", String)
-], Customer.prototype, "password", void 0);
+], CustomerEntity.prototype, "password", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 15, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "phone", void 0);
+], CustomerEntity.prototype, "phone", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "imageURL", void 0);
+], CustomerEntity.prototype, "imageURL", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 200, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "address", void 0);
+], CustomerEntity.prototype, "address", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "city", void 0);
+], CustomerEntity.prototype, "city", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 20, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "postalCode", void 0);
+], CustomerEntity.prototype, "postalCode", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 50, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "country", void 0);
+], CustomerEntity.prototype, "country", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
     __metadata("design:type", Date)
-], Customer.prototype, "dateOfBirth", void 0);
+], CustomerEntity.prototype, "dateOfBirth", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 10, nullable: true }),
     __metadata("design:type", String)
-], Customer.prototype, "gender", void 0);
+], CustomerEntity.prototype, "gender", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'boolean', default: true }),
-    __metadata("design:type", Boolean)
-], Customer.prototype, "isActive", void 0);
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: ['active', 'inactive'],
+        default: 'active'
+    }),
+    __metadata("design:type", String)
+], CustomerEntity.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => order_entity_1.OrderEntity, order => order.customer),
+    __metadata("design:type", Array)
+], CustomerEntity.prototype, "orders", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
-], Customer.prototype, "createdAt", void 0);
+], CustomerEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, typeorm_1.UpdateDateColumn)(),
     __metadata("design:type", Date)
-], Customer.prototype, "updatedAt", void 0);
-exports.Customer = Customer = __decorate([
+], CustomerEntity.prototype, "updatedAt", void 0);
+exports.CustomerEntity = CustomerEntity = __decorate([
     (0, typeorm_1.Entity)('customers')
-], Customer);
+], CustomerEntity);
 //# sourceMappingURL=customer.entity.js.map

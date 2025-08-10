@@ -3,11 +3,14 @@ import { OrderDto } from './order.dto';
 export declare class OrderController {
     private readonly orderService;
     constructor(orderService: OrderService);
-    findAll(): string;
-    findOne(orderId: string): string;
-    addOrder(orderData: OrderDto): string;
-    updateOrder(orderId: string, updateData: OrderDto): string;
-    deleteOrder(orderId: string): string;
+    findAll(): Promise<import("./order.entity").OrderEntity[]>;
+    findOne(id: string): Promise<import("./order.entity").OrderEntity>;
+    create(dto: OrderDto): Promise<import("./order.entity").OrderEntity>;
+    update(id: string, dto: OrderDto): Promise<import("./order.entity").OrderEntity>;
+    patch(id: string, dto: Partial<OrderDto>): Promise<import("./order.entity").OrderEntity>;
+    remove(id: string): Promise<{
+        message: string;
+    }>;
     uploadFile(file: Express.Multer.File): string;
     getFile(filename: any, res: any): void;
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Patch, Param, Body, UsePipes, ValidationPipe, ParseIntPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Patch, Param, Body, UsePipes, ValidationPipe, ParseIntPipe, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ProductService } from './product.service';
@@ -7,6 +7,17 @@ import { ProductDto } from './product.dto';
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
+
+  @Get(':id/image')
+  async getProductImage(@Param('id', ParseIntPipe) id: number, @Res() res) {
+    const imagePath = await this.productService.getProductImagePath(id);
+    if (!imagePath) {
+      return res.status(404).json({ message: 'No image found for this product.' });
+    }
+    // Remove leading slash if present
+    const normalizedPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+    return res.sendFile(normalizedPath, { root: './' });
+  }
 
   @Get()
   async findAll() {
