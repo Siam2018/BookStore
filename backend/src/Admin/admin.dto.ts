@@ -1,7 +1,7 @@
 import { IsString, MinLength, MaxLength, IsNotEmpty, IsEmail, Matches, IsIn } from 'class-validator';
 
 export class AdminDto {
-    // Previous fields
+  
     @IsString()
     @IsNotEmpty({ message: 'Username cannot be empty' })
     @MaxLength(100)
