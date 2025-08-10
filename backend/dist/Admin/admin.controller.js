@@ -14,7 +14,11 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
 const common_1 = require("@nestjs/common");
+<<<<<<< HEAD
 const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
+=======
+const platform_express_1 = require("@nestjs/platform-express");
+>>>>>>> main
 const multer_1 = require("multer");
 const admin_service_1 = require("./admin.service");
 const admin_dto_1 = require("./admin.dto");
@@ -23,6 +27,7 @@ let AdminController = class AdminController {
     constructor(adminService) {
         this.adminService = adminService;
     }
+<<<<<<< HEAD
     findAll() {
         return this.adminService.getAllAdmins();
     }
@@ -43,10 +48,44 @@ let AdminController = class AdminController {
     }
     getFile(filename, res) {
         res.sendFile(filename, { root: './uploads' });
+=======
+    async create(dto) {
+        return this.adminService.createAdmin(dto);
+    }
+    async findAll(fullName) {
+        if (fullName) {
+            return this.adminService.findByFullNameSubstring(fullName);
+        }
+        return this.adminService.getAllAdmins();
+    }
+    async findByUsername(username) {
+        return this.adminService.findByUsername(username);
+    }
+    async removeByUsername(username) {
+        await this.adminService.deleteByUsername(username);
+        return { message: 'Admin deleted by username' };
+    }
+    async findOne(id) {
+        return this.adminService.getAdminById(id);
+    }
+    async update(id, updateData) {
+        return this.adminService.updateAdmin(id, updateData);
+    }
+    async remove(id) {
+        await this.adminService.deleteAdmin(id);
+        return { message: 'Admin deleted' };
+    }
+    uploadFile(file) {
+        return { message: `Uploaded file: ${file.originalname}` };
+    }
+    getFile(filename, res) {
+        return res.sendFile(filename, { root: './uploads' });
+>>>>>>> main
     }
 };
 exports.AdminController = AdminController;
 __decorate([
+<<<<<<< HEAD
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -61,10 +100,14 @@ __decorate([
 ], AdminController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)('/addadmin'),
+=======
+    (0, common_1.Post)(),
+>>>>>>> main
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [admin_dto_1.AdminDto]),
+<<<<<<< HEAD
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "addAdmin", null);
 __decorate([
@@ -86,18 +129,77 @@ __decorate([
 __decorate([
     (0, common_1.Post)('/upload'),
     (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
+=======
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('fullName')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('username/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "findByUsername", null);
+__decorate([
+    (0, common_1.Delete)('username/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "removeByUsername", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe()),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Post)('upload'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+>>>>>>> main
         fileFilter: (req, file, cb) => {
             if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
                 cb(null, true);
             else {
+<<<<<<< HEAD
                 cb(new multer_1.MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+=======
+                cb(new Error('LIMIT_UNEXPECTED_FILE'), false);
+>>>>>>> main
             }
         },
         limits: { fileSize: 30000 },
         storage: (0, multer_1.diskStorage)({
             destination: './uploads',
             filename: function (req, file, cb) {
+<<<<<<< HEAD
                 cb(null, Date.now() + file.originalname);
+=======
+                cb(null, Date.now() + '-' + file.originalname);
+>>>>>>> main
             },
         })
     })),
@@ -107,11 +209,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "uploadFile", null);
 __decorate([
+<<<<<<< HEAD
     (0, common_1.Get)('/getfile/:filename'),
     __param(0, (0, common_1.Param)('filename')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
+=======
+    (0, common_1.Get)('getfile/:filename'),
+    __param(0, (0, common_1.Param)('filename')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+>>>>>>> main
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "getFile", null);
 exports.AdminController = AdminController = __decorate([

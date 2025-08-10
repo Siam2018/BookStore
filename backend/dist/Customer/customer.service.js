@@ -29,6 +29,7 @@ let CustomerService = class CustomerService {
             dateOfBirth: customerDto.dateOfBirth || null,
             gender: customerDto.gender || null,
             isActive: customerDto.isActive !== undefined ? customerDto.isActive : true,
+            socialMediaLink: customerDto.socialMediaLink || null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };

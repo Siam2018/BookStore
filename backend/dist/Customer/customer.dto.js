@@ -25,6 +25,7 @@ class CustomerDto {
     dateOfBirth;
     gender;
     isActive;
+    socialMediaLink;
 }
 exports.CustomerDto = CustomerDto;
 __decorate([
@@ -34,23 +35,25 @@ __decorate([
 ], CustomerDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Matches)(/^[a-zA-Z\s]+$/, { message: 'Name should not contain any numbers' }),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     (0, class_validator_1.MinLength)(6),
+    (0, class_validator_1.Matches)(/.*[@#$&].*/, { message: 'Password must contain one of the special characters (@ or # or $ or &)' }),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "password", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MaxLength)(15),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "phone", void 0);
 __decorate([
@@ -61,36 +64,31 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "address", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MaxLength)(100),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "city", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MaxLength)(20),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "postalCode", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MaxLength)(50),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "country", void 0);
 __decorate([
-    (0, class_validator_1.IsDateString)(),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsDateString)({}, { message: 'Date of birth must be a valid date string YYYY-MM-DD' }),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "dateOfBirth", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MaxLength)(10),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "gender", void 0);
 __decorate([
@@ -98,4 +96,10 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], CustomerDto.prototype, "isActive", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsUrl)({}, { message: 'Social media link must be a valid URL format' }),
+    __metadata("design:type", String)
+], CustomerDto.prototype, "socialMediaLink", void 0);
 //# sourceMappingURL=customer.dto.js.map

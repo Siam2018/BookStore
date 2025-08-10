@@ -12,15 +12,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminDto = void 0;
 const class_validator_1 = require("class-validator");
 class AdminDto {
+<<<<<<< HEAD
     name;
     email;
     password;
     gender;
     phone;
+=======
+    username;
+    fullName;
+    password;
+>>>>>>> main
 }
 exports.AdminDto = AdminDto;
 __decorate([
     (0, class_validator_1.IsString)(),
+<<<<<<< HEAD
     __metadata("design:type", String)
 ], AdminDto.prototype, "name", void 0);
 __decorate([
@@ -43,4 +50,22 @@ __decorate([
     (0, class_validator_1.Matches)(/^\d+$/, { message: 'Phone number must contain only numbers' }),
     __metadata("design:type", String)
 ], AdminDto.prototype, "phone", void 0);
+=======
+    (0, class_validator_1.IsNotEmpty)({ message: 'Username cannot be empty' }),
+    (0, class_validator_1.MaxLength)(100),
+    __metadata("design:type", String)
+], AdminDto.prototype, "username", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Full name cannot be empty' }),
+    (0, class_validator_1.MaxLength)(150),
+    __metadata("design:type", String)
+], AdminDto.prototype, "fullName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Password cannot be empty' }),
+    (0, class_validator_1.MinLength)(6),
+    __metadata("design:type", String)
+], AdminDto.prototype, "password", void 0);
+>>>>>>> main
 //# sourceMappingURL=admin.dto.js.map

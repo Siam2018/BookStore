@@ -12,4 +12,5 @@ export declare class CustomerDto {
     dateOfBirth?: string;
     gender?: string;
     isActive?: boolean;
+    socialMediaLink?: string;
 }
