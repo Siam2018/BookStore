@@ -1,6 +1,21 @@
 import { IsString, MinLength, MaxLength, IsNotEmpty, IsEmail, Matches, IsIn } from 'class-validator';
 
 export class AdminDto {
+    @IsString()
+    imageURL?: string;
+
+    @IsString()
+    address?: string;
+
+    @IsString()
+    city?: string;
+
+
+
+    @IsString()
+    country?: string;
+
+    dateOfBirth?: Date;
   
     @IsString()
     @IsNotEmpty({ message: 'Username cannot be empty' })
@@ -14,21 +29,14 @@ export class AdminDto {
 
     @IsString()
     @IsNotEmpty({ message: 'Password cannot be empty' })
-    @MinLength(6)
+    @MinLength(6, { message: 'Password must be at least 6 characters long' })
+    @Matches(/^(?=.*[A-Z]).+$/, { message: 'Password must contain at least one uppercase character' })
     password: string;
-
-    @IsString()
-    @IsNotEmpty({ message: 'Name cannot be empty' })
-    name: string;
 
     @IsEmail({}, { message: 'Email must be a valid email address' })
     @Matches(/^[\w.-]+@aiub\.edu$/, { message: 'Email must contain aiub.edu' })
     email: string;
 
-    @IsString()
-    @MinLength(6, { message: 'Password must be at least 6 characters long' })
-    @Matches(/^(?=.*[A-Z]).+$/, { message: 'Password must contain at least one uppercase character' })
-    adminPassword: string;
 
     @IsString()
     @IsIn(['male', 'female'], { message: 'Invalid gender' })

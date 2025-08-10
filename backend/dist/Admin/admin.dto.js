@@ -12,16 +12,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminDto = void 0;
 const class_validator_1 = require("class-validator");
 class AdminDto {
+    imageURL;
+    address;
+    city;
+    country;
+    dateOfBirth;
     username;
     fullName;
     password;
-    name;
     email;
-    adminPassword;
     gender;
     phone;
 }
 exports.AdminDto = AdminDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AdminDto.prototype, "imageURL", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AdminDto.prototype, "address", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AdminDto.prototype, "city", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], AdminDto.prototype, "country", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)({ message: 'Username cannot be empty' }),
@@ -37,25 +56,15 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)({ message: 'Password cannot be empty' }),
-    (0, class_validator_1.MinLength)(6),
+    (0, class_validator_1.MinLength)(6, { message: 'Password must be at least 6 characters long' }),
+    (0, class_validator_1.Matches)(/^(?=.*[A-Z]).+$/, { message: 'Password must contain at least one uppercase character' }),
     __metadata("design:type", String)
 ], AdminDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Name cannot be empty' }),
-    __metadata("design:type", String)
-], AdminDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)({}, { message: 'Email must be a valid email address' }),
     (0, class_validator_1.Matches)(/^[\w.-]+@aiub\.edu$/, { message: 'Email must contain aiub.edu' }),
     __metadata("design:type", String)
 ], AdminDto.prototype, "email", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(6, { message: 'Password must be at least 6 characters long' }),
-    (0, class_validator_1.Matches)(/^(?=.*[A-Z]).+$/, { message: 'Password must contain at least one uppercase character' }),
-    __metadata("design:type", String)
-], AdminDto.prototype, "adminPassword", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsIn)(['male', 'female'], { message: 'Invalid gender' }),
