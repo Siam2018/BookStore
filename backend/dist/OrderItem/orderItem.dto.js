@@ -20,30 +20,33 @@ class OrderItemDto {
 }
 exports.OrderItemDto = OrderItemDto;
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsPositive)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Order ID must be a number' }),
+    (0, class_validator_1.IsPositive)({ message: 'Order ID must be positive' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Order ID is required' }),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "orderId", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsPositive)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Product ID must be a number' }),
+    (0, class_validator_1.IsPositive)({ message: 'Product ID must be positive' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Product ID is required' }),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "productId", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.IsNumber)({}, { message: 'Quantity must be a number' }),
+    (0, class_validator_1.Min)(1, { message: 'Quantity must be at least 1' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Quantity is required' }),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "quantity", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Price must be a number' }),
+    (0, class_validator_1.IsPositive)({ message: 'Price must be positive' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Price is required' }),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "price", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Subtotal must be a number' }),
+    (0, class_validator_1.IsPositive)({ message: 'Subtotal must be positive' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Subtotal is required' }),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "subtotal", void 0);
 //# sourceMappingURL=orderItem.dto.js.map

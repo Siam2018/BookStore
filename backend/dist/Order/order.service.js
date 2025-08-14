@@ -32,20 +32,27 @@ let OrderService = class OrderService {
         return order;
     }
     async create(dto) {
-        const { customerId, total, status } = dto;
-        const order = this.orderRepository.create({ customerId, total, status });
-        return this.orderRepository.save(order);
+        const { customerId, status } = dto;
+        const order = this.orderRepository.create({ customerId, status, total: 0 });
+        const savedOrder = await this.orderRepository.save(order);
+        savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
+        return this.orderRepository.save(savedOrder);
     }
     async update(id, dto) {
         const order = await this.findOne(id);
-        const { customerId, total, status } = dto;
+        const { customerId, status } = dto;
         if (customerId !== undefined)
             order.customerId = customerId;
-        if (total !== undefined)
-            order.total = total;
         if (status !== undefined)
             order.status = status;
+        order.total = await this.calculateOrderTotal(order.id);
         return this.orderRepository.save(order);
+    }
+    async calculateOrderTotal(orderId) {
+        const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['orderItems'] });
+        if (!order || !order.orderItems)
+            return 0;
+        return order.orderItems.reduce((sum, item) => sum + Number(item.subtotal), 0);
     }
     async remove(id) {
         const order = await this.findOne(id);

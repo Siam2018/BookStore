@@ -21,20 +21,33 @@ export class OrderService {
     return order;
   }
 
+
   async create(dto: OrderDto): Promise<OrderEntity> {
-  // Only assign fields compatible with OrderEntity
-  const { customerId, total, status } = dto;
-  const order = this.orderRepository.create({ customerId, total, status });
-  return this.orderRepository.save(order);
+    // Only assign fields compatible with OrderEntity
+    const { customerId, status } = dto;
+  const order = this.orderRepository.create({ customerId, status, total: 0 });
+    // Save first to get an order ID
+    const savedOrder = await this.orderRepository.save(order);
+    // Calculate total (should be 0 at creation)
+    savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
+    return this.orderRepository.save(savedOrder);
   }
 
   async update(id: number, dto: Partial<OrderDto>): Promise<OrderEntity> {
-  const order = await this.findOne(id);
-  const { customerId, total, status } = dto;
-  if (customerId !== undefined) order.customerId = customerId;
-  if (total !== undefined) order.total = total;
-  if (status !== undefined) order.status = status;
-  return this.orderRepository.save(order);
+    const order = await this.findOne(id);
+    const { customerId, status } = dto;
+    if (customerId !== undefined) order.customerId = customerId;
+    if (status !== undefined) order.status = status;
+    // Recalculate total after update
+    order.total = await this.calculateOrderTotal(order.id);
+    return this.orderRepository.save(order);
+  }
+
+  async calculateOrderTotal(orderId: number): Promise<number> {
+    // Get all order items for this order
+    const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['orderItems'] });
+    if (!order || !order.orderItems) return 0;
+    return order.orderItems.reduce((sum, item) => sum + Number(item.subtotal), 0);
   }
 
   async remove(id: number): Promise<void> {

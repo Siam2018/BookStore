@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Delete, Patch, Param, Body, UsePipes, Valid
 import { OrderItemService } from './orderItem.service';
 import { OrderItemDto } from './orderItem.dto';
 
-@Controller('order-items')
+@Controller('orderItems')
 export class OrderItemController {
   constructor(private readonly orderItemService: OrderItemService) {}
 
@@ -28,13 +28,22 @@ export class OrderItemController {
 
   @Post()
   @UsePipes(new ValidationPipe())
-  async create(@Body() dto: OrderItemDto) {
-    const newItem = await this.orderItemService.create(dto);
-    return {
-      message: 'Order item created successfully',
-      data: newItem,
-      status: 'success',
-    };
+  async create(@Body() dto: OrderItemDto | OrderItemDto[]) {
+    if (Array.isArray(dto)) {
+      const items = await this.orderItemService.createMany(dto);
+      return {
+        message: 'Order items created successfully',
+        data: items,
+        status: 'success',
+      };
+    } else {
+      const newItem = await this.orderItemService.create(dto);
+      return {
+        message: 'Order item created successfully',
+        data: newItem,
+        status: 'success',
+      };
+    }
   }
 
   @Put(':id')

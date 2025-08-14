@@ -8,5 +8,6 @@ export declare class OrderService {
     findOne(id: number): Promise<OrderEntity>;
     create(dto: OrderDto): Promise<OrderEntity>;
     update(id: number, dto: Partial<OrderDto>): Promise<OrderEntity>;
+    calculateOrderTotal(orderId: number): Promise<number>;
     remove(id: number): Promise<void>;
 }

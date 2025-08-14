@@ -150,7 +150,7 @@ export class CustomerController {
 
     // General update customer
     @Put('/:id')
-    @UsePipes(new ValidationPipe())
+    @UsePipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true,transform: true}))
     async updateCustomer(
         @Param('id', ParseIntPipe) id: number, 
         @Body() updateData: Partial<CustomerDto>

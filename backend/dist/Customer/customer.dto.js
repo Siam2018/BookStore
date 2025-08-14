@@ -9,8 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateCustomerStatusDto = exports.CustomerDto = void 0;
+exports.UpdateCustomerDto = exports.UpdateCustomerStatusDto = exports.CustomerDto = void 0;
 const class_validator_1 = require("class-validator");
+const mapped_types_1 = require("@nestjs/mapped-types");
 class CustomerDto {
     id;
     fullName;
@@ -33,20 +34,20 @@ __decorate([
     __metadata("design:type", Number)
 ], CustomerDto.prototype, "id", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)({ message: 'Full name must be a string' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Full name is required' }),
     (0, class_validator_1.Matches)(/^[a-zA-Z\s]+$/, { message: 'Name should not contain any numbers' }),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "fullName", void 0);
 __decorate([
-    (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)({}, { message: 'Email must be valid' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Email is required' }),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "email", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MinLength)(6),
+    (0, class_validator_1.IsString)({ message: 'Password must be a string' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Password is required' }),
+    (0, class_validator_1.MinLength)(6, { message: 'Password must be at least 6 characters' }),
     (0, class_validator_1.Matches)(/.*[@#$&].*/, { message: 'Password must contain one of the special characters (@ or # or $ or &)' }),
     __metadata("design:type", String)
 ], CustomerDto.prototype, "password", void 0);
@@ -103,4 +104,7 @@ __decorate([
     (0, class_validator_1.IsEnum)(['active', 'inactive'], { message: 'Status must be either active or inactive' }),
     __metadata("design:type", String)
 ], UpdateCustomerStatusDto.prototype, "status", void 0);
+class UpdateCustomerDto extends (0, mapped_types_1.PartialType)(CustomerDto) {
+}
+exports.UpdateCustomerDto = UpdateCustomerDto;
 //# sourceMappingURL=customer.dto.js.map

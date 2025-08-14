@@ -10,21 +10,21 @@ export class ProductDto {
   @MaxLength(255)
   name: string;
 
-  @IsString()
-  @IsOptional()
-  description?: string;
+  @IsString({ message: 'Description must be a string' })
+  @IsNotEmpty({ message: 'Description is required' })
+  description: string;
 
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @IsPositive()
+  @IsNumber({ maxDecimalPlaces: 2 }, { message: 'Price must be a number' })
+  @IsPositive({ message: 'Price must be positive' })
   price: number;
 
-  @IsNumber()
-  @IsOptional()
-  stock?: number;
+  @IsNumber({}, { message: 'Stock must be a number' })
+  @IsNotEmpty({ message: 'Stock is required' })
+  stock: number;
 
-  @IsString()
-  @IsOptional()
-  category?: string;
+  @IsString({ message: 'Category must be a string' })
+  @IsNotEmpty({ message: 'Category is required' })
+  category: string;
 
   @IsString()
   @IsOptional()

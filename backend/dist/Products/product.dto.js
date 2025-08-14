@@ -38,23 +38,23 @@ __decorate([
     __metadata("design:type", String)
 ], ProductDto.prototype, "name", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ message: 'Description must be a string' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Description is required' }),
     __metadata("design:type", String)
 ], ProductDto.prototype, "description", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_validator_1.IsNumber)({ maxDecimalPlaces: 2 }, { message: 'Price must be a number' }),
+    (0, class_validator_1.IsPositive)({ message: 'Price must be positive' }),
     __metadata("design:type", Number)
 ], ProductDto.prototype, "price", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Stock must be a number' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Stock is required' }),
     __metadata("design:type", Number)
 ], ProductDto.prototype, "stock", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)({ message: 'Category must be a string' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Category is required' }),
     __metadata("design:type", String)
 ], ProductDto.prototype, "category", void 0);
 __decorate([

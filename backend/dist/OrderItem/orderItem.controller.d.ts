@@ -13,7 +13,11 @@ export declare class OrderItemController {
         data: import("./orderItem.entity").OrderItem;
         status: string;
     }>;
-    create(dto: OrderItemDto): Promise<{
+    create(dto: OrderItemDto | OrderItemDto[]): Promise<{
+        message: string;
+        data: import("./orderItem.entity").OrderItem[];
+        status: string;
+    } | {
         message: string;
         data: import("./orderItem.entity").OrderItem;
         status: string;

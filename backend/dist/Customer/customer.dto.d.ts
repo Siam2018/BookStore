@@ -16,3 +16,7 @@ export declare class CustomerDto {
 export declare class UpdateCustomerStatusDto {
     status: 'active' | 'inactive';
 }
+declare const UpdateCustomerDto_base: import("@nestjs/mapped-types").MappedType<Partial<CustomerDto>>;
+export declare class UpdateCustomerDto extends UpdateCustomerDto_base {
+}
+export {};

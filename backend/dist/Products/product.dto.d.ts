@@ -1,10 +1,10 @@
 export declare class ProductDto {
     id?: number;
     name: string;
-    description?: string;
+    description: string;
     price: number;
-    stock?: number;
-    category?: string;
+    stock: number;
+    category: string;
     imageURL?: string;
     isActive?: boolean;
     author?: string;

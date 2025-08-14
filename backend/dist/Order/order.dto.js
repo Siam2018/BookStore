@@ -27,7 +27,8 @@ __decorate([
     __metadata("design:type", Number)
 ], OrderDto.prototype, "id", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Customer ID must be a number' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Customer ID is required' }),
     __metadata("design:type", Number)
 ], OrderDto.prototype, "customerId", void 0);
 __decorate([
@@ -36,12 +37,14 @@ __decorate([
     __metadata("design:type", Array)
 ], OrderDto.prototype, "orderItems", void 0);
 __decorate([
-    (0, class_validator_1.IsDecimal)({ decimal_digits: '0,2' }),
-    (0, class_validator_1.IsPositive)(),
+    (0, class_validator_1.IsNumber)({}, { message: 'Total must be a number' }),
+    (0, class_validator_1.IsPositive)({ message: 'Total must be a positive number' }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], OrderDto.prototype, "total", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsString)({ message: 'Status must be a string' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Status is required' }),
     __metadata("design:type", String)
 ], OrderDto.prototype, "status", void 0);
 __decorate([

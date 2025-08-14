@@ -38,12 +38,22 @@ let OrderItemController = class OrderItemController {
         };
     }
     async create(dto) {
-        const newItem = await this.orderItemService.create(dto);
-        return {
-            message: 'Order item created successfully',
-            data: newItem,
-            status: 'success',
-        };
+        if (Array.isArray(dto)) {
+            const items = await this.orderItemService.createMany(dto);
+            return {
+                message: 'Order items created successfully',
+                data: items,
+                status: 'success',
+            };
+        }
+        else {
+            const newItem = await this.orderItemService.create(dto);
+            return {
+                message: 'Order item created successfully',
+                data: newItem,
+                status: 'success',
+            };
+        }
     }
     async update(id, dto) {
         const updated = await this.orderItemService.update(id, dto);
@@ -85,7 +95,7 @@ __decorate([
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [orderItem_dto_1.OrderItemDto]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrderItemController.prototype, "create", null);
 __decorate([
@@ -114,7 +124,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderItemController.prototype, "remove", null);
 exports.OrderItemController = OrderItemController = __decorate([
-    (0, common_1.Controller)('order-items'),
+    (0, common_1.Controller)('orderItems'),
     __metadata("design:paramtypes", [orderItem_service_1.OrderItemService])
 ], OrderItemController);
 //# sourceMappingURL=orderItem.controller.js.map
