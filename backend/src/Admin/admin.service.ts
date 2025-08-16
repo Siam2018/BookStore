@@ -6,6 +6,14 @@ import { AdminDto } from './admin.dto';
 
 @Injectable()
 export class AdminService {
+    async updateByUsername(username: string, updatedAdmin: Partial<AdminDto>): Promise<AdminEntity | null> {
+        const admin = await this.adminRepository.findOneBy({ username });
+        if (!admin) {
+            throw new ConflictException('Username does not exist');
+        }
+        await this.adminRepository.update({ username }, updatedAdmin);
+        return this.adminRepository.findOneBy({ username });
+    }
     constructor(
         @InjectRepository(AdminEntity)
         private adminRepository: Repository<AdminEntity>,
@@ -42,8 +50,12 @@ export class AdminService {
             .getMany();
     }
 
-    async findByUsername(username: string): Promise<AdminEntity | null> {
-        return this.adminRepository.findOneBy({ username });
+    async findByUsername(username: string): Promise<AdminEntity> {
+        const admin = await this.adminRepository.findOneBy({ username });
+        if (!admin) {
+            throw new ConflictException('Username does not exist');
+        }
+        return admin;
     }
 
     async deleteByUsername(username: string): Promise<void> {

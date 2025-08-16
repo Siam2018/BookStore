@@ -1,10 +1,13 @@
 export declare class AdminDto {
+    imageURL?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    dateOfBirth?: Date;
     username: string;
     fullName: string;
     password: string;
-    name: string;
     email: string;
-    adminPassword: string;
     gender: string;
     phone: string;
 }

@@ -3,11 +3,14 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { CustomerModule } from './Customer/customer.module';
 import { ProductModule } from './Products/product.module';
 import { OrderModule } from './Order/order.module';
 import { AdminModule } from './Admin/admin.module';
 import { OrderItemModule } from './OrderItem/orderItem.module';
+import { AuthModule } from './Auth/auth.module';
+import { MailModule } from './Mail/mail.module';
 
 @Module({
   imports: [
@@ -29,7 +32,9 @@ import { OrderItemModule } from './OrderItem/orderItem.module';
     ProductModule, 
     OrderModule,
     AdminModule,
-    OrderItemModule
+  OrderItemModule,
+  AuthModule,
+  MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

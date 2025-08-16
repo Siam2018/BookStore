@@ -17,9 +17,18 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const admin_service_1 = require("./admin.service");
+const jwt_auth_guard_1 = require("../Auth/jwt-auth.guard");
 const admin_dto_1 = require("./admin.dto");
 let AdminController = class AdminController {
     adminService;
+    async updateByUsername(username, updateData) {
+        try {
+            return await this.adminService.updateByUsername(username, updateData);
+        }
+        catch (error) {
+            return { message: error.message };
+        }
+    }
     constructor(adminService) {
         this.adminService = adminService;
     }
@@ -33,11 +42,24 @@ let AdminController = class AdminController {
         return this.adminService.getAllAdmins();
     }
     async findByUsername(username) {
-        return this.adminService.findByUsername(username);
+        try {
+            return await this.adminService.findByUsername(username);
+        }
+        catch (error) {
+            return { message: error.message };
+        }
     }
     async removeByUsername(username) {
         await this.adminService.deleteByUsername(username);
         return { message: 'Admin deleted by username' };
+    }
+    async updateImage(username, file) {
+        try {
+            return await this.adminService.updateByUsername(username, { imageURL: `/uploads/${file.filename}` });
+        }
+        catch (error) {
+            return { message: error.message };
+        }
     }
     async findOne(id) {
         return this.adminService.getAdminById(id);
@@ -57,6 +79,14 @@ let AdminController = class AdminController {
     }
 };
 exports.AdminController = AdminController;
+__decorate([
+    (0, common_1.Put)('username/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateByUsername", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
@@ -86,6 +116,31 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "removeByUsername", null);
+__decorate([
+    (0, common_1.Patch)('username/:username/image'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads',
+            filename: (req, file, cb) => {
+                cb(null, Date.now() + '-' + file.originalname);
+            }
+        }),
+        fileFilter: (req, file, cb) => {
+            if (file.originalname.match(/^.*\.(jpg|jpeg|png|webp)$/)) {
+                cb(null, true);
+            }
+            else {
+                cb(new Error('Invalid file type'), false);
+            }
+        },
+        limits: { fileSize: 1000000 }
+    })),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateImage", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
@@ -141,6 +196,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "getFile", null);
 exports.AdminController = AdminController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('admin'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])
 ], AdminController);

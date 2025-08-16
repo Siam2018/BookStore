@@ -19,6 +19,14 @@ const typeorm_2 = require("typeorm");
 const admin_entity_1 = require("./admin.entity");
 let AdminService = class AdminService {
     adminRepository;
+    async updateByUsername(username, updatedAdmin) {
+        const admin = await this.adminRepository.findOneBy({ username });
+        if (!admin) {
+            throw new common_1.ConflictException('Username does not exist');
+        }
+        await this.adminRepository.update({ username }, updatedAdmin);
+        return this.adminRepository.findOneBy({ username });
+    }
     constructor(adminRepository) {
         this.adminRepository = adminRepository;
     }
@@ -49,7 +57,11 @@ let AdminService = class AdminService {
             .getMany();
     }
     async findByUsername(username) {
-        return this.adminRepository.findOneBy({ username });
+        const admin = await this.adminRepository.findOneBy({ username });
+        if (!admin) {
+            throw new common_1.ConflictException('Username does not exist');
+        }
+        return admin;
     }
     async deleteByUsername(username) {
         await this.adminRepository.delete({ username });

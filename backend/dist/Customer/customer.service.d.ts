@@ -4,6 +4,7 @@ import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 export declare class CustomerService {
     private customerRepository;
     constructor(customerRepository: Repository<CustomerEntity>);
+    findByEmail(email: string): Promise<CustomerEntity | null>;
     getCustomerImagePath(id: number): Promise<string | null>;
     addCustomer(customerDto: CustomerDto): Promise<CustomerEntity>;
     getAllCustomers(): Promise<CustomerEntity[]>;

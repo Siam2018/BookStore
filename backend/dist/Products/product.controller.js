@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const product_service_1 = require("./product.service");
+const jwt_auth_guard_1 = require("../Auth/jwt-auth.guard");
 const product_dto_1 = require("./product.dto");
 let ProductController = class ProductController {
     productService;
@@ -175,6 +176,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "remove", null);
 exports.ProductController = ProductController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('products'),
     __metadata("design:paramtypes", [product_service_1.ProductService])
 ], ProductController);

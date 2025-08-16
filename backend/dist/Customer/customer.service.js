@@ -22,12 +22,18 @@ let CustomerService = class CustomerService {
     constructor(customerRepository) {
         this.customerRepository = customerRepository;
     }
+    async findByEmail(email) {
+        return this.customerRepository.findOne({ where: { email } });
+    }
     async getCustomerImagePath(id) {
         const customer = await this.getCustomerById(id);
         return customer.imageURL || null;
     }
     async addCustomer(customerDto) {
-        const customer = this.customerRepository.create(customerDto);
+        const bcrypt = require('bcrypt');
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(customerDto.password, saltRounds);
+        const customer = this.customerRepository.create({ ...customerDto, password: hashedPassword });
         return await this.customerRepository.save(customer);
     }
     async getAllCustomers() {

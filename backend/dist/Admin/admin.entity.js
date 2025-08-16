@@ -16,8 +16,16 @@ let AdminEntity = class AdminEntity {
     id;
     username;
     fullName;
+    email;
+    gender;
+    phone;
     isActive;
     password;
+    imageURL;
+    address;
+    city;
+    country;
+    dateOfBirth;
     generateId() {
         this.id = (0, uuid_1.v4)();
     }
@@ -36,13 +44,45 @@ __decorate([
     __metadata("design:type", String)
 ], AdminEntity.prototype, "fullName", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: false }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 150, unique: true }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "email", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 20 }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "gender", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 20 }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "phone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
     __metadata("design:type", Boolean)
 ], AdminEntity.prototype, "isActive", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], AdminEntity.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "imageURL", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 200, nullable: true }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "address", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "city", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50, nullable: true }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "country", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
+    __metadata("design:type", Date)
+], AdminEntity.prototype, "dateOfBirth", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     __metadata("design:type", Function),

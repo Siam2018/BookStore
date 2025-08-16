@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
+import { JwtAuthGuard } from '../Auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 import { MulterError, diskStorage } from 'multer';
@@ -8,6 +9,7 @@ import { MulterError, diskStorage } from 'multer';
 export class CustomerController {
     constructor(private readonly customerService: CustomerService) { }
     // Get all customers
+    @UseGuards(JwtAuthGuard)
     @Get('/')
     async findAll() {
         const customers = await this.customerService.getAllCustomers();
@@ -19,6 +21,7 @@ export class CustomerController {
     }
 
     // Get customer by ID
+    @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
         const customer = await this.customerService.getCustomerById(id);

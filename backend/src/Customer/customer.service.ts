@@ -11,6 +11,11 @@ export class CustomerService {
     private customerRepository: Repository<CustomerEntity>,
   ) {}
 
+  // Find customer by email (for authentication)
+  async findByEmail(email: string): Promise<CustomerEntity | null> {
+    return this.customerRepository.findOne({ where: { email } });
+  }
+
   // Get customer image path by ID
   async getCustomerImagePath(id: number): Promise<string | null> {
     const customer = await this.getCustomerById(id);
@@ -19,7 +24,10 @@ export class CustomerService {
 
   // Create a customer (includes User Category 1 Operation 1: Create a user)
   async addCustomer(customerDto: CustomerDto): Promise<CustomerEntity> {
-    const customer = this.customerRepository.create(customerDto);
+    const bcrypt = require('bcrypt');
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(customerDto.password, saltRounds);
+    const customer = this.customerRepository.create({ ...customerDto, password: hashedPassword });
     return await this.customerRepository.save(customer);
   }
 
