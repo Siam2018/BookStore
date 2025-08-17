@@ -1,7 +1,8 @@
-import { IsString, MinLength, MaxLength, IsNotEmpty, IsEmail, Matches, IsIn } from 'class-validator';
+import { IsString, MinLength, MaxLength, IsNotEmpty, IsEmail, Matches, IsIn, IsOptional } from 'class-validator';
 
 export class AdminDto {
     @IsString()
+<<<<<<< HEAD
     imageURL?: string;
 
     @IsString()
@@ -15,6 +16,25 @@ export class AdminDto {
     @IsString()
     country?: string;
 
+=======
+    @IsOptional()
+    imageURL?: string;
+
+    @IsString()
+    @IsOptional()
+    address?: string;
+
+    @IsString()
+    @IsOptional()
+    city?: string;
+
+    @IsString()
+    @IsOptional()
+    country?: string;
+
+    @IsString()
+    @IsOptional()
+>>>>>>> origin
     dateOfBirth?: Date;
   
     @IsString()
@@ -34,7 +54,11 @@ export class AdminDto {
     password: string;
 
     @IsEmail({}, { message: 'Email must be a valid email address' })
+<<<<<<< HEAD
     @Matches(/^[\w.-]+@aiub\.edu$/, { message: 'Email must contain aiub.edu' })
+=======
+    @Matches(/^[\w.-]+@gmail\.com$/, { message: 'Email must contain gmail.com' })
+>>>>>>> origin
     email: string;
 
 

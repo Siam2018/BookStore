@@ -1,27 +1,32 @@
-import { IsString, IsNumber, IsArray, IsDateString } from "class-validator";
+import { IsNumber, IsString, IsArray, IsDateString, IsOptional, IsPositive, IsNotEmpty } from 'class-validator';
 
 export class OrderDto {
     @IsNumber()
-    id: number;
+    @IsOptional()
+    id?: number;
 
-    @IsString()
-    name: string;
-
-    @IsString()
-    details: string;
-
-    @IsNumber()
+    @IsNumber({}, { message: 'Customer ID must be a number' })
+    @IsNotEmpty({ message: 'Customer ID is required' })
     customerId: number;
 
     @IsArray()
-    productIds: number[];
+    @IsOptional()
+    orderItems?: number[];
 
-    @IsNumber()
-    totalAmount: number;
+    @IsNumber({}, { message: 'Total must be a number' })
+    @IsPositive({ message: 'Total must be a positive number' })
+    @IsOptional()
+    total?: number;
+
+    @IsString({ message: 'Status must be a string' })
+    @IsNotEmpty({ message: 'Status is required' })
+    status: string;
 
     @IsDateString()
-    orderDate: string;
+    @IsOptional()
+    createdAt?: string;
 
-    @IsString()
-    status: string;
+    @IsDateString()
+    @IsOptional()
+    updatedAt?: string;
 }

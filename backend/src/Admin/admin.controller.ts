@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Put, Patch, Delete, Param, Body, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, Res, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Patch, Delete, Param, Body, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, Res, Query, UseGuards } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { AdminService } from './admin.service';
+import { JwtAuthGuard } from '../Auth/jwt-auth.guard';
 import { AdminDto } from './admin.dto';
 
+@UseGuards(JwtAuthGuard)
 @Controller('admin')
 export class AdminController {
    
@@ -13,7 +15,11 @@ export class AdminController {
         try {
             return await this.adminService.updateByUsername(username, updateData);
         } catch (error) {
-            return { message: error.message };
+            const status = error.status || 500;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(
+                error.message || 'Failed to update admin by username',
+                status
+            );
         }
     }
     constructor(private readonly adminService: AdminService) {}
@@ -37,7 +43,11 @@ export class AdminController {
         try {
             return await this.adminService.findByUsername(username);
         } catch (error) {
-            return { message: error.message };
+            const status = error.status || 404;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(
+                error.message || 'Admin not found',
+                status
+            );
         }
     }
 
@@ -68,7 +78,11 @@ export class AdminController {
         try {
             return await this.adminService.updateByUsername(username, { imageURL: `/uploads/${file.filename}` });
         } catch (error) {
-            return { message: error.message };
+            const status = error.status || 500;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(
+                error.message || 'Failed to update admin image',
+                status
+            );
         }
     }
 
