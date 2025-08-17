@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch, UseGuards, Req } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { MailService } from '../Mail/mail.service';
 
@@ -80,11 +80,19 @@ export class CustomerController {
 
     // User Category 1 Operation 2: Change the status of a user to either 'active' or 'inactive'
     @Put('/:id/status')
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe())
     async updateCustomerStatus(
         @Param('id', ParseIntPipe) id: number, 
-        @Body() statusData: UpdateCustomerStatusDto
+        @Body() statusData: UpdateCustomerStatusDto,
+        @Req() req
     ) {
+        const user = req.user;
+        if (user.role !== 'admin') {
+            throw new (require('@nestjs/common').ForbiddenException)(
+                'Only admin can update customer status.'
+            );
+        }
         try {
             const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
             return {
@@ -196,7 +204,14 @@ export class CustomerController {
 
     // Toggle customer status between active/inactive (User Category 1)
     @Put('/:id/toggle-status')
-    async toggleCustomerStatus(@Param('id', ParseIntPipe) id: number) {
+    @UseGuards(JwtAuthGuard)
+    async toggleCustomerStatus(@Param('id', ParseIntPipe) id: number, @Req() req) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)(
+                'You can only toggle your own status.'
+            );
+        }
         const customer = await this.customerService.toggleCustomerStatus(id);
         return {
             message: 'Customer status toggled successfully',
@@ -207,11 +222,19 @@ export class CustomerController {
 
     // General update customer
     @Put('/:id')
+    @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true,transform: true}))
     async updateCustomer(
         @Param('id', ParseIntPipe) id: number, 
-        @Body() updateData: Partial<CustomerDto>
+        @Body() updateData: Partial<CustomerDto>,
+        @Req() req
     ) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)(
+                'You can only update your own profile.'
+            );
+        }
         const updatedCustomer = await this.customerService.updateCustomer(id, updateData);
         return {
             message: 'Customer updated successfully',
@@ -222,7 +245,14 @@ export class CustomerController {
 
     // Delete customer
     @Delete('/:id')
-    async deleteCustomer(@Param('id', ParseIntPipe) id: number) {
+    @UseGuards(JwtAuthGuard)
+    async deleteCustomer(@Param('id', ParseIntPipe) id: number, @Req() req) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)(
+                'You can only delete your own profile.'
+            );
+        }
         await this.customerService.deleteCustomer(id);
         return {
             message: 'Customer deleted successfully',
@@ -232,6 +262,7 @@ export class CustomerController {
 
     
     @Patch('/:id/image')
+    @UseGuards(JwtAuthGuard)
     @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
             destination: './uploads/customers',
@@ -251,8 +282,15 @@ export class CustomerController {
     }))
     async uploadImage(
         @Param('id', ParseIntPipe) id: number,
-        @UploadedFile() file: Express.Multer.File
+        @UploadedFile() file: Express.Multer.File,
+        @Req() req
     ) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)(
+                'You can only update your own image.'
+            );
+        }
         if (!file) {
             return { message: 'No file uploaded', status: 'error' };
         }
