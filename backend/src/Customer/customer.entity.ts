@@ -1,11 +1,14 @@
+
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { OrderEntity } from '../Order/order.entity';
 
 @Entity('customers')
 export class CustomerEntity {
-
   @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
   id: number;
+
+  @Column({ type: 'varchar', length: 20, default: 'customer' })
+  role: string;
 
   @Column({ type: 'varchar', length: 100 })
   fullName: string;

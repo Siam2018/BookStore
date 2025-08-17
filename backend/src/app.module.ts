@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD, Reflector } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -11,6 +12,7 @@ import { AdminModule } from './Admin/admin.module';
 import { OrderItemModule } from './OrderItem/orderItem.module';
 import { AuthModule } from './Auth/auth.module';
 import { MailModule } from './Mail/mail.module';
+import { RolesGuard } from './Auth/roles.guard';
 
 @Module({
   imports: [
@@ -37,6 +39,13 @@ import { MailModule } from './Mail/mail.module';
   MailModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    Reflector
+  ],
 })
 export class AppModule {}
