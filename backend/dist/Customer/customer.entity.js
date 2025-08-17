@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const order_entity_1 = require("../Order/order.entity");
 let CustomerEntity = class CustomerEntity {
     id;
+    role;
     fullName;
     email;
     password;
@@ -35,6 +36,10 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({ type: 'int', unsigned: true }),
     __metadata("design:type", Number)
 ], CustomerEntity.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 20, default: 'customer' }),
+    __metadata("design:type", String)
+], CustomerEntity.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 100 }),
     __metadata("design:type", String)

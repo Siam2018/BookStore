@@ -20,7 +20,7 @@ export declare class CustomerController {
         data: import("./customer.entity").CustomerEntity;
         status: string;
     }>;
-    updateCustomerStatus(id: number, statusData: UpdateCustomerStatusDto): Promise<{
+    updateCustomerStatus(id: number, statusData: UpdateCustomerStatusDto, req: any): Promise<{
         message: string;
         data: import("./customer.entity").CustomerEntity;
         status: string;
@@ -60,21 +60,21 @@ export declare class CustomerController {
         data: import("./customer.entity").CustomerEntity[];
         status: string;
     }>;
-    toggleCustomerStatus(id: number): Promise<{
+    toggleCustomerStatus(id: number, req: any): Promise<{
         message: string;
         data: import("./customer.entity").CustomerEntity;
         status: string;
     }>;
-    updateCustomer(id: number, updateData: Partial<CustomerDto>): Promise<{
+    updateCustomer(id: number, updateData: Partial<CustomerDto>, req: any): Promise<{
         message: string;
         data: import("./customer.entity").CustomerEntity;
         status: string;
     }>;
-    deleteCustomer(id: number): Promise<{
+    deleteCustomer(id: number, req: any): Promise<{
         message: string;
         status: string;
     }>;
-    uploadImage(id: number, file: Express.Multer.File): Promise<{
+    uploadImage(id: number, file: Express.Multer.File, req: any): Promise<{
         message: string;
         status: string;
         data?: undefined;

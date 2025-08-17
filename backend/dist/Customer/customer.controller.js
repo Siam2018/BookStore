@@ -16,7 +16,7 @@ exports.CustomerController = void 0;
 const common_1 = require("@nestjs/common");
 const customer_service_1 = require("./customer.service");
 const mail_service_1 = require("../Mail/mail.service");
-const jwt_auth_guard_1 = require("../Auth/jwt-auth.guard");
+const jwtAuth_guard_1 = require("../Auth/jwtAuth.guard");
 const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
 const customer_dto_1 = require("./customer.dto");
 const multer_1 = require("multer");
@@ -67,7 +67,11 @@ let CustomerController = class CustomerController {
             throw new (error.status && error.status === 400 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Failed to add customer', error.status || 500);
         }
     }
-    async updateCustomerStatus(id, statusData) {
+    async updateCustomerStatus(id, statusData, req) {
+        const user = req.user;
+        if (user.role !== 'admin') {
+            throw new (require('@nestjs/common').ForbiddenException)('Only admin can update customer status.');
+        }
         try {
             const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
             return {
@@ -146,7 +150,11 @@ let CustomerController = class CustomerController {
             status: 'success'
         };
     }
-    async toggleCustomerStatus(id) {
+    async toggleCustomerStatus(id, req) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)('You can only toggle your own status.');
+        }
         const customer = await this.customerService.toggleCustomerStatus(id);
         return {
             message: 'Customer status toggled successfully',
@@ -154,7 +162,11 @@ let CustomerController = class CustomerController {
             status: 'success'
         };
     }
-    async updateCustomer(id, updateData) {
+    async updateCustomer(id, updateData, req) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)('You can only update your own profile.');
+        }
         const updatedCustomer = await this.customerService.updateCustomer(id, updateData);
         return {
             message: 'Customer updated successfully',
@@ -162,14 +174,22 @@ let CustomerController = class CustomerController {
             status: 'success'
         };
     }
-    async deleteCustomer(id) {
+    async deleteCustomer(id, req) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)('You can only delete your own profile.');
+        }
         await this.customerService.deleteCustomer(id);
         return {
             message: 'Customer deleted successfully',
             status: 'success'
         };
     }
-    async uploadImage(id, file) {
+    async uploadImage(id, file, req) {
+        const user = req.user;
+        if (user.role !== 'admin' && user.userId !== id) {
+            throw new (require('@nestjs/common').ForbiddenException)('You can only update your own image.');
+        }
         if (!file) {
             return { message: 'No file uploaded', status: 'error' };
         }
@@ -193,14 +213,14 @@ let CustomerController = class CustomerController {
 };
 exports.CustomerController = CustomerController;
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('/'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -217,11 +237,13 @@ __decorate([
 ], CustomerController.prototype, "addCustomer", null);
 __decorate([
     (0, common_1.Put)('/:id/status'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, customer_dto_1.UpdateCustomerStatusDto]),
+    __metadata("design:paramtypes", [Number, customer_dto_1.UpdateCustomerStatusDto, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "updateCustomerStatus", null);
 __decorate([
@@ -274,29 +296,36 @@ __decorate([
 ], CustomerController.prototype, "searchCustomersByName", null);
 __decorate([
     (0, common_1.Put)('/:id/toggle-status'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "toggleCustomerStatus", null);
 __decorate([
     (0, common_1.Put)('/:id'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.UsePipes)(new common_1.ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true })),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "updateCustomer", null);
 __decorate([
     (0, common_1.Delete)('/:id'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "deleteCustomer", null);
 __decorate([
     (0, common_1.Patch)('/:id/image'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.UseInterceptors)((0, file_interceptor_1.FileInterceptor)('file', {
         storage: (0, multer_1.diskStorage)({
             destination: './uploads/customers',
@@ -317,8 +346,9 @@ __decorate([
     })),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "uploadImage", null);
 __decorate([

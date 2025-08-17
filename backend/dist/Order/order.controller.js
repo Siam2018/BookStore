@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderController = void 0;
 const common_1 = require("@nestjs/common");
 const order_service_1 = require("./order.service");
-const jwt_auth_guard_1 = require("../Auth/jwt-auth.guard");
+const jwtAuth_guard_1 = require("../Auth/jwtAuth.guard");
 const order_dto_1 = require("./order.dto");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
@@ -129,7 +129,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrderController.prototype, "getFile", null);
 exports.OrderController = OrderController = __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('orders'),
     __metadata("design:paramtypes", [order_service_1.OrderService])
 ], OrderController);

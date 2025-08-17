@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const uuid_1 = require("uuid");
 let AdminEntity = class AdminEntity {
     id;
+    role;
     username;
     fullName;
     email;
@@ -35,6 +36,10 @@ __decorate([
     (0, typeorm_1.PrimaryColumn)({ type: 'uuid' }),
     __metadata("design:type", String)
 ], AdminEntity.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 20, default: 'admin' }),
+    __metadata("design:type", String)
+], AdminEntity.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 100, unique: true }),
     __metadata("design:type", String)

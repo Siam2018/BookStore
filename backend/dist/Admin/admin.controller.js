@@ -17,7 +17,7 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const admin_service_1 = require("./admin.service");
-const jwt_auth_guard_1 = require("../Auth/jwt-auth.guard");
+const jwtAuth_guard_1 = require("../Auth/jwtAuth.guard");
 const admin_dto_1 = require("./admin.dto");
 let AdminController = class AdminController {
     adminService;
@@ -199,7 +199,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "getFile", null);
 exports.AdminController = AdminController = __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Controller)('admin'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])
 ], AdminController);

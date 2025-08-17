@@ -1,6 +1,7 @@
 import { OrderEntity } from '../Order/order.entity';
 export declare class CustomerEntity {
     id: number;
+    role: string;
     fullName: string;
     email: string;
     password: string;

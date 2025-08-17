@@ -1,5 +1,6 @@
 export declare class AdminEntity {
     id: string;
+    role: string;
     username: string;
     fullName: string;
     email: string;
