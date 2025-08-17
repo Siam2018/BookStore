@@ -1,10 +1,7 @@
 import { Controller, Post, Request, UseGuards, Body, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-import { Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {}
+import { JwtAuthGuard } from './jwtAuth.guard';
 
 @Controller('auth')
 export class AuthController {

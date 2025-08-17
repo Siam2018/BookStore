@@ -3,10 +3,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { AdminService } from './admin.service';
 
-import { Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {}
+import { JwtAuthGuard } from '../Auth/jwtAuth.guard';
 import { AdminDto } from './admin.dto';
 
 @UseGuards(JwtAuthGuard)

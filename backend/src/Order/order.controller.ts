@@ -1,10 +1,7 @@
 import { Controller, Get, Param, Post, UsePipes, ValidationPipe, Body, Put, Delete, Patch, UseInterceptors, UploadedFile, Res, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 
-import { Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-@Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {}
+import { JwtAuthGuard } from '../Auth/jwtAuth.guard';
 import { OrderDto } from './order.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
