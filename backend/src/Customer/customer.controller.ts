@@ -1,7 +1,11 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { MailService } from '../Mail/mail.service';
-import { JwtAuthGuard } from '../Auth/jwt-auth.guard';
+
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 import { MulterError, diskStorage } from 'multer';

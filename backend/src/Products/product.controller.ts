@@ -1,11 +1,15 @@
 import { Controller, Get, Post, Put, Delete, Patch, Param, Body, UsePipes, ValidationPipe, ParseIntPipe, UseInterceptors, UploadedFile, Res, UseGuards } from '@nestjs/common';
+import { Roles } from '../Auth/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ProductService } from './product.service';
-import { JwtAuthGuard } from '../Auth/jwt-auth.guard';
+
+import { Injectable } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}
 import { ProductDto } from './product.dto';
 
-@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
@@ -42,6 +46,7 @@ export class ProductController {
   }
 
   @Post()
+  @Roles('admin')
   @UsePipes(new ValidationPipe())
   async create(@Body() dto: ProductDto) {
     const newProduct = await this.productService.addProduct(dto);
@@ -53,6 +58,7 @@ export class ProductController {
   }
 
   @Put(':id')
+  @Roles('admin')
   @UsePipes(new ValidationPipe())
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: ProductDto) {
     const updated = await this.productService.updateProduct(id, dto);
@@ -64,6 +70,7 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @Roles('admin')
   @UsePipes(new ValidationPipe())
   async patch(@Param('id', ParseIntPipe) id: number, @Body() dto: Partial<ProductDto>) {
     const updated = await this.productService.updateProduct(id, dto);
@@ -75,6 +82,7 @@ export class ProductController {
   }
 
   @Patch(':id/image')
+  @Roles('admin')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: './uploads/products',
@@ -110,6 +118,7 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const deleted = await this.productService.deleteProduct(id);
     return {
