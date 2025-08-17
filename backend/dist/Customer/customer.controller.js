@@ -15,62 +15,96 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerController = void 0;
 const common_1 = require("@nestjs/common");
 const customer_service_1 = require("./customer.service");
+const mail_service_1 = require("../Mail/mail.service");
 const jwt_auth_guard_1 = require("../Auth/jwt-auth.guard");
 const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
 const customer_dto_1 = require("./customer.dto");
 const multer_1 = require("multer");
 let CustomerController = class CustomerController {
     customerService;
-    constructor(customerService) {
+    mailService;
+    constructor(customerService, mailService) {
         this.customerService = customerService;
+        this.mailService = mailService;
     }
     async findAll() {
-        const customers = await this.customerService.getAllCustomers();
-        return {
-            message: 'Get all customers',
-            data: customers,
-            status: 'success'
-        };
+        try {
+            const customers = await this.customerService.getAllCustomers();
+            return {
+                message: 'Get all customers',
+                data: customers,
+                status: 'success'
+            };
+        }
+        catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Failed to get customers', error.status || 500);
+        }
     }
     async findOne(id) {
-        const customer = await this.customerService.getCustomerById(id);
-        return {
-            message: `Get customer with ID: ${id}`,
-            data: customer,
-            status: 'success'
-        };
+        try {
+            const customer = await this.customerService.getCustomerById(id);
+            return {
+                message: `Get customer with ID: ${id}`,
+                data: customer,
+                status: 'success'
+            };
+        }
+        catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Customer not found', error.status || 500);
+        }
     }
     async addCustomer(customerData) {
-        const newCustomer = await this.customerService.addCustomer(customerData);
-        return {
-            message: 'Customer added successfully',
-            data: newCustomer,
-            status: 'success'
-        };
+        try {
+            const newCustomer = await this.customerService.addCustomer(customerData);
+            await this.mailService.sendMail(newCustomer.email, 'Welcome to BookStore!', `Hello ${newCustomer.fullName},\n\nThank you for registering at BookStore!`);
+            return {
+                message: 'Customer added successfully',
+                data: newCustomer,
+                status: 'success'
+            };
+        }
+        catch (error) {
+            throw new (error.status && error.status === 400 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Failed to add customer', error.status || 500);
+        }
     }
     async updateCustomerStatus(id, statusData) {
-        const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
-        return {
-            message: 'Customer status updated successfully',
-            data: updatedCustomer,
-            status: 'success'
-        };
+        try {
+            const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
+            return {
+                message: 'Customer status updated successfully',
+                data: updatedCustomer,
+                status: 'success'
+            };
+        }
+        catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Failed to update customer status', error.status || 500);
+        }
     }
     async getInactiveCustomers() {
-        const inactiveCustomers = await this.customerService.getInactiveCustomers();
-        return {
-            message: 'Retrieved inactive customers',
-            data: inactiveCustomers,
-            status: 'success'
-        };
+        try {
+            const inactiveCustomers = await this.customerService.getInactiveCustomers();
+            return {
+                message: 'Retrieved inactive customers',
+                data: inactiveCustomers,
+                status: 'success'
+            };
+        }
+        catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Failed to get inactive customers', error.status || 500);
+        }
     }
     async getActiveCustomers() {
-        const activeCustomers = await this.customerService.getActiveCustomers();
-        return {
-            message: 'Retrieved active customers',
-            data: activeCustomers,
-            status: 'success'
-        };
+        try {
+            const activeCustomers = await this.customerService.getActiveCustomers();
+            return {
+                message: 'Retrieved active customers',
+                data: activeCustomers,
+                status: 'success'
+            };
+        }
+        catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(error.message || 'Failed to get active customers', error.status || 500);
+        }
     }
     async getCustomersOlderThan(minAge) {
         const customers = await this.customerService.getCustomersOlderThan(minAge);
@@ -297,6 +331,7 @@ __decorate([
 ], CustomerController.prototype, "getCustomerImage", null);
 exports.CustomerController = CustomerController = __decorate([
     (0, common_1.Controller)('customer'),
-    __metadata("design:paramtypes", [customer_service_1.CustomerService])
+    __metadata("design:paramtypes", [customer_service_1.CustomerService,
+        mail_service_1.MailService])
 ], CustomerController);
 //# sourceMappingURL=customer.controller.js.map

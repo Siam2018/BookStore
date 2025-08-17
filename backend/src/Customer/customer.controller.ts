@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch, UseGuards } from '@nestjs/common';
 import { CustomerService } from './customer.service';
+import { MailService } from '../Mail/mail.service';
 import { JwtAuthGuard } from '../Auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
@@ -7,42 +8,73 @@ import { MulterError, diskStorage } from 'multer';
 
 @Controller('customer')
 export class CustomerController {
-    constructor(private readonly customerService: CustomerService) { }
+    constructor(
+        private readonly customerService: CustomerService,
+        private readonly mailService: MailService
+    ) {}
+
     // Get all customers
     @UseGuards(JwtAuthGuard)
     @Get('/')
     async findAll() {
-        const customers = await this.customerService.getAllCustomers();
-        return {
-            message: 'Get all customers',
-            data: customers,
-            status: 'success'
-        };
+        try {
+            const customers = await this.customerService.getAllCustomers();
+            return {
+                message: 'Get all customers',
+                data: customers,
+                status: 'success'
+            };
+        } catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(
+                error.message || 'Failed to get customers',
+                error.status || 500
+            );
+        }
     }
 
     // Get customer by ID
     @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
-        const customer = await this.customerService.getCustomerById(id);
-        return {
-            message: `Get customer with ID: ${id}`,
-            data: customer,
-            status: 'success'
-        };
+        try {
+            const customer = await this.customerService.getCustomerById(id);
+            return {
+                message: `Get customer with ID: ${id}`,
+                data: customer,
+                status: 'success'
+            };
+        } catch (error) {
+            // If the service throws NotFoundException, rethrow as HttpException with custom message
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(
+                error.message || 'Customer not found',
+                error.status || 500
+            );
+        }
     }
 
     // User Category 1 Operation 1: Create a user
     @Post('/addcustomer')
     @UsePipes(new ValidationPipe())
     async addCustomer(@Body() customerData: CustomerDto) {
-        const newCustomer = await this.customerService.addCustomer(customerData);
-        
-        return {
-            message: 'Customer added successfully',
-            data: newCustomer,
-            status: 'success'
-        };
+        try {
+            const newCustomer = await this.customerService.addCustomer(customerData);
+            // Send welcome email
+            await this.mailService.sendMail(
+                newCustomer.email,
+                'Welcome to BookStore!',
+                `Hello ${newCustomer.fullName},\n\nThank you for registering at BookStore!`
+            );
+            return {
+                message: 'Customer added successfully',
+                data: newCustomer,
+                status: 'success'
+            };
+        } catch (error) {
+            throw new (error.status && error.status === 400 ? error.constructor : require('@nestjs/common').HttpException)(
+                error.message || 'Failed to add customer',
+                error.status || 500
+            );
+        }
     }
 
     // User Category 1 Operation 2: Change the status of a user to either 'active' or 'inactive'
@@ -52,34 +84,55 @@ export class CustomerController {
         @Param('id', ParseIntPipe) id: number, 
         @Body() statusData: UpdateCustomerStatusDto
     ) {
-        const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
-        return {
-            message: 'Customer status updated successfully',
-            data: updatedCustomer,
-            status: 'success'
-        };
+        try {
+            const updatedCustomer = await this.customerService.updateCustomerStatus(id, statusData);
+            return {
+                message: 'Customer status updated successfully',
+                data: updatedCustomer,
+                status: 'success'
+            };
+        } catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(
+                error.message || 'Failed to update customer status',
+                error.status || 500
+            );
+        }
     }
 
     // User Category 1 Operation 3: Retrieve a list of users based on their 'inactive' status
     @Get('/status/inactive')
     async getInactiveCustomers() {
-        const inactiveCustomers = await this.customerService.getInactiveCustomers();
-        return {
-            message: 'Retrieved inactive customers',
-            data: inactiveCustomers,
-            status: 'success'
-        };
+        try {
+            const inactiveCustomers = await this.customerService.getInactiveCustomers();
+            return {
+                message: 'Retrieved inactive customers',
+                data: inactiveCustomers,
+                status: 'success'
+            };
+        } catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(
+                error.message || 'Failed to get inactive customers',
+                error.status || 500
+            );
+        }
     }
 
     // Get active customers (additional functionality)
     @Get('/status/active')
     async getActiveCustomers() {
-        const activeCustomers = await this.customerService.getActiveCustomers();
-        return {
-            message: 'Retrieved active customers',
-            data: activeCustomers,
-            status: 'success'
-        };
+        try {
+            const activeCustomers = await this.customerService.getActiveCustomers();
+            return {
+                message: 'Retrieved active customers',
+                data: activeCustomers,
+                status: 'success'
+            };
+        } catch (error) {
+            throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(
+                error.message || 'Failed to get active customers',
+                error.status || 500
+            );
+        }
     }
 
     // User Category 1 Operation 4: Get a list of users older than specified age

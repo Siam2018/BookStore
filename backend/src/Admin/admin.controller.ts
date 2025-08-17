@@ -15,7 +15,11 @@ export class AdminController {
         try {
             return await this.adminService.updateByUsername(username, updateData);
         } catch (error) {
-            return { message: error.message };
+            const status = error.status || 500;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(
+                error.message || 'Failed to update admin by username',
+                status
+            );
         }
     }
     constructor(private readonly adminService: AdminService) {}
@@ -39,7 +43,11 @@ export class AdminController {
         try {
             return await this.adminService.findByUsername(username);
         } catch (error) {
-            return { message: error.message };
+            const status = error.status || 404;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(
+                error.message || 'Admin not found',
+                status
+            );
         }
     }
 
@@ -70,7 +78,11 @@ export class AdminController {
         try {
             return await this.adminService.updateByUsername(username, { imageURL: `/uploads/${file.filename}` });
         } catch (error) {
-            return { message: error.message };
+            const status = error.status || 500;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(
+                error.message || 'Failed to update admin image',
+                status
+            );
         }
     }
 

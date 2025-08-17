@@ -27,20 +27,29 @@ class AdminDto {
 exports.AdminDto = AdminDto;
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AdminDto.prototype, "imageURL", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AdminDto.prototype, "address", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AdminDto.prototype, "city", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], AdminDto.prototype, "country", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Date)
+], AdminDto.prototype, "dateOfBirth", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)({ message: 'Username cannot be empty' }),
@@ -62,7 +71,7 @@ __decorate([
 ], AdminDto.prototype, "password", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)({}, { message: 'Email must be a valid email address' }),
-    (0, class_validator_1.Matches)(/^[\w.-]+@aiub\.edu$/, { message: 'Email must contain aiub.edu' }),
+    (0, class_validator_1.Matches)(/^[\w.-]+@gmail\.com$/, { message: 'Email must contain gmail.com' }),
     __metadata("design:type", String)
 ], AdminDto.prototype, "email", void 0);
 __decorate([

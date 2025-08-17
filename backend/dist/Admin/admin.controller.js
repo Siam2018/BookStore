@@ -26,7 +26,8 @@ let AdminController = class AdminController {
             return await this.adminService.updateByUsername(username, updateData);
         }
         catch (error) {
-            return { message: error.message };
+            const status = error.status || 500;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update admin by username', status);
         }
     }
     constructor(adminService) {
@@ -46,7 +47,8 @@ let AdminController = class AdminController {
             return await this.adminService.findByUsername(username);
         }
         catch (error) {
-            return { message: error.message };
+            const status = error.status || 404;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Admin not found', status);
         }
     }
     async removeByUsername(username) {
@@ -58,7 +60,8 @@ let AdminController = class AdminController {
             return await this.adminService.updateByUsername(username, { imageURL: `/uploads/${file.filename}` });
         }
         catch (error) {
-            return { message: error.message };
+            const status = error.status || 500;
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update admin image', status);
         }
     }
     async findOne(id) {

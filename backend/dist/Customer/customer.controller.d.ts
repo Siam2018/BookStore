@@ -1,8 +1,10 @@
 import { CustomerService } from './customer.service';
+import { MailService } from '../Mail/mail.service';
 import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 export declare class CustomerController {
     private readonly customerService;
-    constructor(customerService: CustomerService);
+    private readonly mailService;
+    constructor(customerService: CustomerService, mailService: MailService);
     findAll(): Promise<{
         message: string;
         data: import("./customer.entity").CustomerEntity[];
