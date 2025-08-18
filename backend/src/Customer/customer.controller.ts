@@ -6,6 +6,8 @@ import { JwtAuthGuard } from '../Auth/jwtAuth.guard';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 import { MulterError, diskStorage } from 'multer';
+import { Roles, RolesGuard } from 'src/Auth/roles.guard';
+
 
 @Controller('customer')
 export class CustomerController {
@@ -14,7 +16,6 @@ export class CustomerController {
         private readonly mailService: MailService
     ) {}
 
-    // Get all customers
     @UseGuards(JwtAuthGuard)
     @Get('/')
     async findAll() {
@@ -33,7 +34,6 @@ export class CustomerController {
         }
     }
 
-    // Get customer by ID
     @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -45,7 +45,6 @@ export class CustomerController {
                 status: 'success'
             };
         } catch (error) {
-            // If the service throws NotFoundException, rethrow as HttpException with custom message
             throw new (error.status && error.status === 404 ? error.constructor : require('@nestjs/common').HttpException)(
                 error.message || 'Customer not found',
                 error.status || 500
@@ -53,7 +52,6 @@ export class CustomerController {
         }
     }
 
-    // User Category 1 Operation 1: Create a user
     @Post('/addcustomer')
     @UsePipes(new ValidationPipe())
     async addCustomer(@Body() customerData: CustomerDto) {
@@ -78,9 +76,9 @@ export class CustomerController {
         }
     }
 
-    // User Category 1 Operation 2: Change the status of a user to either 'active' or 'inactive'
     @Put('/:id/status')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @UsePipes(new ValidationPipe())
     async updateCustomerStatus(
         @Param('id', ParseIntPipe) id: number, 
@@ -108,8 +106,9 @@ export class CustomerController {
         }
     }
 
-    // User Category 1 Operation 3: Retrieve a list of users based on their 'inactive' status
     @Get('/status/inactive')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     async getInactiveCustomers() {
         try {
             const inactiveCustomers = await this.customerService.getInactiveCustomers();
@@ -126,7 +125,6 @@ export class CustomerController {
         }
     }
 
-    // Get active customers (additional functionality)
     @Get('/status/active')
     async getActiveCustomers() {
         try {
@@ -144,7 +142,6 @@ export class CustomerController {
         }
     }
 
-    // User Category 1 Operation 4: Get a list of users older than specified age
     @Get('/age/older-than/:minAge')
     async getCustomersOlderThan(@Param('minAge', ParseIntPipe) minAge: number) {
         const customers = await this.customerService.getCustomersOlderThan(minAge);
@@ -155,7 +152,6 @@ export class CustomerController {
         };
     }
 
-    // Get customers by age range
     @Get('/age/range')
     async getCustomersByAge(
         @Query('minAge', ParseIntPipe) minAge: number,
@@ -191,7 +187,6 @@ export class CustomerController {
         };
     }
 
-    // Search customers by name
     @Get('/search/:searchTerm')
     async searchCustomersByName(@Param('searchTerm') searchTerm: string) {
         const customers = await this.customerService.searchCustomersByName(searchTerm);
@@ -202,9 +197,9 @@ export class CustomerController {
         };
     }
 
-    // Toggle customer status between active/inactive (User Category 1)
     @Put('/:id/toggle-status')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     async toggleCustomerStatus(@Param('id', ParseIntPipe) id: number, @Req() req) {
         const user = req.user;
         if (user.role !== 'admin' && user.userId !== id) {
@@ -220,7 +215,6 @@ export class CustomerController {
         };
     }
 
-    // General update customer
     @Put('/:id')
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe({whitelist: true, forbidNonWhitelisted: true,transform: true}))
@@ -243,7 +237,6 @@ export class CustomerController {
         };
     }
 
-    // Delete customer
     @Delete('/:id')
     @UseGuards(JwtAuthGuard)
     async deleteCustomer(@Param('id', ParseIntPipe) id: number, @Req() req) {
