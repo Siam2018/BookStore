@@ -21,44 +21,79 @@ export class OrderItemService {
   ) {}
 
   async findAll(): Promise<OrderItem[]> {
-    return this.orderItemRepository.find();
+    try {
+      return await this.orderItemRepository.find();
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get all order items',
+        error.status || 500
+      );
+    }
   }
 
   async findOne(id: number): Promise<OrderItem> {
-    const item = await this.orderItemRepository.findOne({ where: { id } });
-    if (!item) {
-      throw new NotFoundException('Order item not found');
+    try {
+      const item = await this.orderItemRepository.findOne({ where: { id } });
+      if (!item) {
+        throw new NotFoundException('Order item not found');
+      }
+      return item;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get order item',
+        error.status || 500
+      );
     }
-    return item;
   }
 
   async create(dto: OrderItemDto): Promise<OrderItem> {
-    const item = await this.createOrderItem(dto);
-    if (item.orderId) {
-      await this.orderService.update(item.orderId, {});
+    try {
+      const item = await this.createOrderItem(dto);
+      if (item.orderId) {
+        await this.orderService.update(item.orderId, {});
+      }
+      return item;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to create order item',
+        error.status || 500
+      );
     }
-    return item;
   }
 
   async createMany(dtos: OrderItemDto[]): Promise<OrderItem[]> {
-    const items = await this.createOrderItemsBatch(dtos);
-    if (items.length && items[0].orderId) {
-      await this.orderService.update(items[0].orderId, {});
+    try {
+      const items = await this.createOrderItemsBatch(dtos);
+      if (items.length && items[0].orderId) {
+        await this.orderService.update(items[0].orderId, {});
+      }
+      return items;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to create order items',
+        error.status || 500
+      );
     }
-    return items;
   }
 
   async update(id: number, dto: Partial<OrderItemDto>): Promise<OrderItem> {
-    const item = await this.orderItemRepository.findOne({ where: { id } });
-    if (!item) {
-      throw new NotFoundException('Order item not found');
+    try {
+      const item = await this.orderItemRepository.findOne({ where: { id } });
+      if (!item) {
+        throw new NotFoundException('Order item not found');
+      }
+      Object.assign(item, dto);
+      const saved = await this.orderItemRepository.save(item);
+      if (saved.orderId) {
+        await this.orderService.update(saved.orderId, {});
+      }
+      return saved;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to update order item',
+        error.status || 500
+      );
     }
-    Object.assign(item, dto);
-    const saved = await this.orderItemRepository.save(item);
-    if (saved.orderId) {
-      await this.orderService.update(saved.orderId, {});
-    }
-    return saved;
   }
 
   async remove(id: number): Promise<void> {

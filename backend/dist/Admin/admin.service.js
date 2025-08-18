@@ -20,12 +20,17 @@ const admin_entity_1 = require("./admin.entity");
 let AdminService = class AdminService {
     adminRepository;
     async updateByUsername(username, updatedAdmin) {
-        const admin = await this.adminRepository.findOneBy({ username });
-        if (!admin) {
-            throw new common_1.ConflictException('Username does not exist');
+        try {
+            const admin = await this.adminRepository.findOneBy({ username });
+            if (!admin) {
+                throw new common_1.ConflictException('Username does not exist');
+            }
+            await this.adminRepository.update({ username }, updatedAdmin);
+            return this.adminRepository.findOneBy({ username });
         }
-        await this.adminRepository.update({ username }, updatedAdmin);
-        return this.adminRepository.findOneBy({ username });
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update admin by username', error.status || 500);
+        }
     }
     constructor(adminRepository) {
         this.adminRepository = adminRepository;
@@ -35,7 +40,10 @@ let AdminService = class AdminService {
         if (existing) {
             throw new common_1.ConflictException('Username already exists');
         }
-        const entity = this.adminRepository.create(admin);
+        const bcrypt = require('bcrypt');
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(admin.password, saltRounds);
+        const entity = this.adminRepository.create({ ...admin, password: hashedPassword });
         return this.adminRepository.save(entity);
     }
     async getAllAdmins() {
@@ -45,8 +53,13 @@ let AdminService = class AdminService {
         return this.adminRepository.findOneBy({ id });
     }
     async updateAdmin(id, updatedAdmin) {
-        await this.adminRepository.update(id, updatedAdmin);
-        return this.adminRepository.findOneBy({ id });
+        try {
+            await this.adminRepository.update(id, updatedAdmin);
+            return this.adminRepository.findOneBy({ id });
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update admin', error.status || 500);
+        }
     }
     async deleteAdmin(id) {
         await this.adminRepository.delete(id);

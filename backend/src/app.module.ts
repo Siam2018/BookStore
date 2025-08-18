@@ -13,6 +13,7 @@ import { OrderItemModule } from './OrderItem/orderItem.module';
 import { AuthModule } from './Auth/auth.module';
 import { MailModule } from './Mail/mail.module';
 import { RolesGuard } from './Auth/roles.guard';
+import { JwtAuthGuard } from './Auth/jwtAuth.guard';
 
 @Module({
   imports: [
@@ -41,6 +42,10 @@ import { RolesGuard } from './Auth/roles.guard';
   controllers: [AppController],
   providers: [
     AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

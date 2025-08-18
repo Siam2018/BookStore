@@ -14,10 +14,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductController = void 0;
 const common_1 = require("@nestjs/common");
+const public_decorator_1 = require("../Auth/public.decorator");
 const roles_guard_1 = require("../Auth/roles.guard");
 const platform_express_1 = require("@nestjs/platform-express");
 const multer_1 = require("multer");
 const product_service_1 = require("./product.service");
+const jwtAuth_guard_1 = require("../Auth/jwtAuth.guard");
 const product_dto_1 = require("./product.dto");
 let ProductController = class ProductController {
     productService;
@@ -96,6 +98,7 @@ let ProductController = class ProductController {
 };
 exports.ProductController = ProductController;
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Get)(':id/image'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Res)()),
@@ -104,12 +107,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getProductImage", null);
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "findAll", null);
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -118,6 +123,7 @@ __decorate([
 ], ProductController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_guard_1.Roles)('admin'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
@@ -127,6 +133,7 @@ __decorate([
 ], ProductController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_guard_1.Roles)('admin'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -137,6 +144,7 @@ __decorate([
 ], ProductController.prototype, "update", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_guard_1.Roles)('admin'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -147,6 +155,7 @@ __decorate([
 ], ProductController.prototype, "patch", null);
 __decorate([
     (0, common_1.Patch)(':id/image'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_guard_1.Roles)('admin'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
         storage: (0, multer_1.diskStorage)({
@@ -174,6 +183,7 @@ __decorate([
 ], ProductController.prototype, "uploadImage", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, roles_guard_1.Roles)('admin'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),

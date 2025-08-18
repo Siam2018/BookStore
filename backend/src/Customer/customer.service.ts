@@ -13,50 +13,99 @@ export class CustomerService {
 
   // Find customer by email (for authentication)
   async findByEmail(email: string): Promise<CustomerEntity | null> {
-    return this.customerRepository.findOne({ where: { email } });
+    try {
+      return await this.customerRepository.findOne({ where: { email } });
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to find customer by email',
+        error.status || 500
+      );
+    }
   }
 
   // Get customer image path by ID
   async getCustomerImagePath(id: number): Promise<string | null> {
-    const customer = await this.getCustomerById(id);
-    return customer.imageURL || null;
+    try {
+      const customer = await this.getCustomerById(id);
+      return customer.imageURL || null;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get customer image path',
+        error.status || 500
+      );
+    }
   }
 
   // Create a customer (includes User Category 1 Operation 1: Create a user)
   async addCustomer(customerDto: CustomerDto): Promise<CustomerEntity> {
-    const bcrypt = require('bcrypt');
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(customerDto.password, saltRounds);
-    const customer = this.customerRepository.create({ ...customerDto, password: hashedPassword });
-    return await this.customerRepository.save(customer);
+    try {
+      const bcrypt = require('bcrypt');
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(customerDto.password, saltRounds);
+      const customer = this.customerRepository.create({ ...customerDto, password: hashedPassword });
+      return await this.customerRepository.save(customer);
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to add customer',
+        error.status || 500
+      );
+    }
   }
 
   // Get all customers
   async getAllCustomers(): Promise<CustomerEntity[]> {
-    return await this.customerRepository.find();
+    try {
+      return await this.customerRepository.find();
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get all customers',
+        error.status || 500
+      );
+    }
   }
 
   // Get customer by ID
   async getCustomerById(id: number): Promise<CustomerEntity> {
-    const customer = await this.customerRepository.findOneBy({ id: id });
-    if (!customer) {
-      throw new NotFoundException(`Customer with ID ${id} not found`);
+    try {
+      const customer = await this.customerRepository.findOneBy({ id: id });
+      if (!customer) {
+        throw new NotFoundException(`Customer with ID ${id} not found`);
+      }
+      return customer;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get customer by ID',
+        error.status || 500
+      );
     }
-    return customer;
   }
 
   // User Category 1 Operation 2: Change the status of a user to either 'active' or 'inactive'
   async updateCustomerStatus(id: number, statusDto: UpdateCustomerStatusDto): Promise<CustomerEntity> {
-    const customer = await this.getCustomerById(id);
-    customer.status = statusDto.status;
-    return await this.customerRepository.save(customer);
+    try {
+      const customer = await this.getCustomerById(id);
+      customer.status = statusDto.status;
+      return await this.customerRepository.save(customer);
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to update customer status',
+        error.status || 500
+      );
+    }
   }
 
   // User Category 1 Operation 3: Retrieve a list of users based on their 'inactive' status
   async getInactiveCustomers(): Promise<CustomerEntity[]> {
-    return await this.customerRepository.find({ 
-      where: { status: 'inactive' } 
-    });
+    try {
+      return await this.customerRepository.find({ 
+        where: { status: 'inactive' } 
+      });
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get inactive customers',
+        error.status || 500
+      );
+    }
   }
 
   // User Category 1 Operation 4: Get a list of users older than specified age

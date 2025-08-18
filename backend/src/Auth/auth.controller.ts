@@ -1,4 +1,5 @@
 import { Controller, Post, Request, UseGuards, Body, HttpException, HttpStatus } from '@nestjs/common';
+import { Public } from './public.decorator';
 import { AuthService } from './auth.service';
 
 import { JwtAuthGuard } from './jwtAuth.guard';
@@ -7,6 +8,7 @@ import { JwtAuthGuard } from './jwtAuth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   async login(@Body() body: { identifier: string; password: string }) {
     // identifier can be email (customer or admin) or username (admin)

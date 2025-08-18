@@ -12,46 +12,88 @@ export class OrderService {
   ) {}
 
   async findAll(): Promise<OrderEntity[]> {
-    return this.orderRepository.find({ relations: ['orderItems', 'customer'] });
+    try {
+      return await this.orderRepository.find({ relations: ['orderItems', 'customer'] });
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get all orders',
+        error.status || 500
+      );
+    }
   }
 
   async findOne(id: number): Promise<OrderEntity> {
-    const order = await this.orderRepository.findOne({ where: { id }, relations: ['orderItems', 'customer'] });
-    if (!order) throw new NotFoundException('Order not found');
-    return order;
+    try {
+      const order = await this.orderRepository.findOne({ where: { id }, relations: ['orderItems', 'customer'] });
+      if (!order) throw new NotFoundException('Order not found');
+      return order;
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to get order',
+        error.status || 500
+      );
+    }
   }
 
 
   async create(dto: OrderDto): Promise<OrderEntity> {
-    // Only assign fields compatible with OrderEntity
-    const { customerId, status } = dto;
-  const order = this.orderRepository.create({ customerId, status, total: 0 });
-    // Save first to get an order ID
-    const savedOrder = await this.orderRepository.save(order);
-    // Calculate total (should be 0 at creation)
-    savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
-    return this.orderRepository.save(savedOrder);
+    try {
+      // Only assign fields compatible with OrderEntity
+      const { customerId, status } = dto;
+      const order = this.orderRepository.create({ customerId, status, total: 0 });
+      // Save first to get an order ID
+      const savedOrder = await this.orderRepository.save(order);
+      // Calculate total (should be 0 at creation)
+      savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
+      return this.orderRepository.save(savedOrder);
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to create order',
+        error.status || 500
+      );
+    }
   }
 
   async update(id: number, dto: Partial<OrderDto>): Promise<OrderEntity> {
-    const order = await this.findOne(id);
-    const { customerId, status } = dto;
-    if (customerId !== undefined) order.customerId = customerId;
-    if (status !== undefined) order.status = status;
-    // Recalculate total after update
-    order.total = await this.calculateOrderTotal(order.id);
-    return this.orderRepository.save(order);
+    try {
+      const order = await this.findOne(id);
+      const { customerId, status } = dto;
+      if (customerId !== undefined) order.customerId = customerId;
+      if (status !== undefined) order.status = status;
+      // Recalculate total after update
+      order.total = await this.calculateOrderTotal(order.id);
+      return this.orderRepository.save(order);
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to update order',
+        error.status || 500
+      );
+    }
   }
 
   async calculateOrderTotal(orderId: number): Promise<number> {
-    // Get all order items for this order
-    const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['orderItems'] });
-    if (!order || !order.orderItems) return 0;
-    return order.orderItems.reduce((sum, item) => sum + Number(item.subtotal), 0);
+    try {
+      // Get all order items for this order
+      const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['orderItems'] });
+      if (!order || !order.orderItems) return 0;
+      return order.orderItems.reduce((sum, item) => sum + Number(item.subtotal), 0);
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to calculate order total',
+        error.status || 500
+      );
+    }
   }
 
   async remove(id: number): Promise<void> {
-    const order = await this.findOne(id);
-    await this.orderRepository.remove(order);
+    try {
+      const order = await this.findOne(id);
+      await this.orderRepository.remove(order);
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Failed to delete order',
+        error.status || 500
+      );
+    }
   }
 }

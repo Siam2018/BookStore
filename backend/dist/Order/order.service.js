@@ -23,40 +23,70 @@ let OrderService = class OrderService {
         this.orderRepository = orderRepository;
     }
     async findAll() {
-        return this.orderRepository.find({ relations: ['orderItems', 'customer'] });
+        try {
+            return await this.orderRepository.find({ relations: ['orderItems', 'customer'] });
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get all orders', error.status || 500);
+        }
     }
     async findOne(id) {
-        const order = await this.orderRepository.findOne({ where: { id }, relations: ['orderItems', 'customer'] });
-        if (!order)
-            throw new common_1.NotFoundException('Order not found');
-        return order;
+        try {
+            const order = await this.orderRepository.findOne({ where: { id }, relations: ['orderItems', 'customer'] });
+            if (!order)
+                throw new common_1.NotFoundException('Order not found');
+            return order;
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get order', error.status || 500);
+        }
     }
     async create(dto) {
-        const { customerId, status } = dto;
-        const order = this.orderRepository.create({ customerId, status, total: 0 });
-        const savedOrder = await this.orderRepository.save(order);
-        savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
-        return this.orderRepository.save(savedOrder);
+        try {
+            const { customerId, status } = dto;
+            const order = this.orderRepository.create({ customerId, status, total: 0 });
+            const savedOrder = await this.orderRepository.save(order);
+            savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
+            return this.orderRepository.save(savedOrder);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to create order', error.status || 500);
+        }
     }
     async update(id, dto) {
-        const order = await this.findOne(id);
-        const { customerId, status } = dto;
-        if (customerId !== undefined)
-            order.customerId = customerId;
-        if (status !== undefined)
-            order.status = status;
-        order.total = await this.calculateOrderTotal(order.id);
-        return this.orderRepository.save(order);
+        try {
+            const order = await this.findOne(id);
+            const { customerId, status } = dto;
+            if (customerId !== undefined)
+                order.customerId = customerId;
+            if (status !== undefined)
+                order.status = status;
+            order.total = await this.calculateOrderTotal(order.id);
+            return this.orderRepository.save(order);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update order', error.status || 500);
+        }
     }
     async calculateOrderTotal(orderId) {
-        const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['orderItems'] });
-        if (!order || !order.orderItems)
-            return 0;
-        return order.orderItems.reduce((sum, item) => sum + Number(item.subtotal), 0);
+        try {
+            const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['orderItems'] });
+            if (!order || !order.orderItems)
+                return 0;
+            return order.orderItems.reduce((sum, item) => sum + Number(item.subtotal), 0);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to calculate order total', error.status || 500);
+        }
     }
     async remove(id) {
-        const order = await this.findOne(id);
-        await this.orderRepository.remove(order);
+        try {
+            const order = await this.findOne(id);
+            await this.orderRepository.remove(order);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to delete order', error.status || 500);
+        }
     }
 };
 exports.OrderService = OrderService;

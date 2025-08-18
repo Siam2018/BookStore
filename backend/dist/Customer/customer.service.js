@@ -23,38 +23,73 @@ let CustomerService = class CustomerService {
         this.customerRepository = customerRepository;
     }
     async findByEmail(email) {
-        return this.customerRepository.findOne({ where: { email } });
+        try {
+            return await this.customerRepository.findOne({ where: { email } });
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to find customer by email', error.status || 500);
+        }
     }
     async getCustomerImagePath(id) {
-        const customer = await this.getCustomerById(id);
-        return customer.imageURL || null;
+        try {
+            const customer = await this.getCustomerById(id);
+            return customer.imageURL || null;
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get customer image path', error.status || 500);
+        }
     }
     async addCustomer(customerDto) {
-        const bcrypt = require('bcrypt');
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(customerDto.password, saltRounds);
-        const customer = this.customerRepository.create({ ...customerDto, password: hashedPassword });
-        return await this.customerRepository.save(customer);
+        try {
+            const bcrypt = require('bcrypt');
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(customerDto.password, saltRounds);
+            const customer = this.customerRepository.create({ ...customerDto, password: hashedPassword });
+            return await this.customerRepository.save(customer);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to add customer', error.status || 500);
+        }
     }
     async getAllCustomers() {
-        return await this.customerRepository.find();
+        try {
+            return await this.customerRepository.find();
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get all customers', error.status || 500);
+        }
     }
     async getCustomerById(id) {
-        const customer = await this.customerRepository.findOneBy({ id: id });
-        if (!customer) {
-            throw new common_1.NotFoundException(`Customer with ID ${id} not found`);
+        try {
+            const customer = await this.customerRepository.findOneBy({ id: id });
+            if (!customer) {
+                throw new common_1.NotFoundException(`Customer with ID ${id} not found`);
+            }
+            return customer;
         }
-        return customer;
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get customer by ID', error.status || 500);
+        }
     }
     async updateCustomerStatus(id, statusDto) {
-        const customer = await this.getCustomerById(id);
-        customer.status = statusDto.status;
-        return await this.customerRepository.save(customer);
+        try {
+            const customer = await this.getCustomerById(id);
+            customer.status = statusDto.status;
+            return await this.customerRepository.save(customer);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update customer status', error.status || 500);
+        }
     }
     async getInactiveCustomers() {
-        return await this.customerRepository.find({
-            where: { status: 'inactive' }
-        });
+        try {
+            return await this.customerRepository.find({
+                where: { status: 'inactive' }
+            });
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get inactive customers', error.status || 500);
+        }
     }
     async getCustomersOlderThan(minAge) {
         const currentDate = new Date();

@@ -16,20 +16,27 @@ export class AuthService {
 
   async validateUser(identifier: string, pass: string): Promise<AdminEntity | CustomerEntity | null> {
     // Try admin by username
-    let user: AdminEntity | CustomerEntity | null = null;
+    let admin: AdminEntity | null = null;
     try {
-      user = await this.adminService.findByUsername(identifier);
+      admin = await this.adminService.findByUsername(identifier);
     } catch {}
-    // Try admin by email if not found by username
-    if (!user) {
-      user = await this.adminService['adminRepository']?.findOneBy?.({ email: identifier }) ?? null;
+    if (admin && 'password' in admin && await bcrypt.compare(pass, admin.password)) {
+      const { password, ...result } = admin as any;
+      return result;
     }
-    // Try customer by email if not found as admin
-    if (!user) {
-      user = await this.customerService.findByEmail(identifier);
+    // Try admin by email
+    let adminByEmail: AdminEntity | null = null;
+    if (!admin) {
+      adminByEmail = await this.adminService['adminRepository']?.findOneBy?.({ email: identifier }) ?? null;
+      if (adminByEmail && 'password' in adminByEmail && await bcrypt.compare(pass, adminByEmail.password)) {
+        const { password, ...result } = adminByEmail as any;
+        return result;
+      }
     }
-    if (user && 'password' in user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user as any;
+    // Try customer by email
+    const customer = await this.customerService.findByEmail(identifier);
+    if (customer && 'password' in customer && await bcrypt.compare(pass, customer.password)) {
+      const { password, ...result } = customer as any;
       return result;
     }
     return null;

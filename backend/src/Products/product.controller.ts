@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Patch, Param, Body, UsePipes, ValidationPipe, ParseIntPipe, UseInterceptors, UploadedFile, Res, UseGuards } from '@nestjs/common';
-import { Roles } from '../Auth/roles.guard';
+import { Public } from '../Auth/public.decorator';
+import { Roles, RolesGuard } from '../Auth/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ProductService } from './product.service';
@@ -7,10 +8,12 @@ import { ProductService } from './product.service';
 import { JwtAuthGuard } from '../Auth/jwtAuth.guard';
 import { ProductDto } from './product.dto';
 
+// JwtAuthGuard will be applied only to protected endpoints
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  @Public()
   @Get(':id/image')
   async getProductImage(@Param('id', ParseIntPipe) id: number, @Res() res) {
     const imagePath = await this.productService.getProductImagePath(id);
@@ -22,6 +25,7 @@ export class ProductController {
     return res.sendFile(normalizedPath, { root: './' });
   }
 
+  @Public()
   @Get()
   async findAll() {
     const products = await this.productService.getAllProducts();
@@ -32,6 +36,7 @@ export class ProductController {
     };
   }
 
+  @Public()
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const product = await this.productService.getProductById(id);
@@ -43,6 +48,7 @@ export class ProductController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @UsePipes(new ValidationPipe())
   async create(@Body() dto: ProductDto) {
@@ -55,6 +61,7 @@ export class ProductController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @UsePipes(new ValidationPipe())
   async update(@Param('id', ParseIntPipe) id: number, @Body() dto: ProductDto) {
@@ -67,6 +74,7 @@ export class ProductController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @UsePipes(new ValidationPipe())
   async patch(@Param('id', ParseIntPipe) id: number, @Body() dto: Partial<ProductDto>) {
@@ -79,6 +87,7 @@ export class ProductController {
   }
 
   @Patch(':id/image')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
@@ -115,6 +124,7 @@ export class ProductController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async remove(@Param('id', ParseIntPipe) id: number) {
     const deleted = await this.productService.deleteProduct(id);

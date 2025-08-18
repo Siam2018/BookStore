@@ -21,6 +21,7 @@ const orderItem_module_1 = require("./OrderItem/orderItem.module");
 const auth_module_1 = require("./Auth/auth.module");
 const mail_module_1 = require("./Mail/mail.module");
 const roles_guard_1 = require("./Auth/roles.guard");
+const jwtAuth_guard_1 = require("./Auth/jwtAuth.guard");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -52,6 +53,10 @@ exports.AppModule = AppModule = __decorate([
         controllers: [app_controller_1.AppController],
         providers: [
             app_service_1.AppService,
+            {
+                provide: core_1.APP_GUARD,
+                useClass: jwtAuth_guard_1.JwtAuthGuard,
+            },
             {
                 provide: core_1.APP_GUARD,
                 useClass: roles_guard_1.RolesGuard,
