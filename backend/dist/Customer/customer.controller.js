@@ -16,6 +16,7 @@ exports.CustomerController = void 0;
 const common_1 = require("@nestjs/common");
 const customer_service_1 = require("./customer.service");
 const mail_service_1 = require("../Mail/mail.service");
+const public_decorator_1 = require("../Auth/public.decorator");
 const jwtAuth_guard_1 = require("../Auth/jwtAuth.guard");
 const file_interceptor_1 = require("@nestjs/platform-express/multer/interceptors/file.interceptor");
 const customer_dto_1 = require("./customer.dto");
@@ -229,6 +230,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "findOne", null);
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Post)('/addcustomer'),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
@@ -250,8 +252,6 @@ __decorate([
 ], CustomerController.prototype, "updateCustomerStatus", null);
 __decorate([
     (0, common_1.Get)('/status/inactive'),
-    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_guard_1.Roles)('admin'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -300,8 +300,7 @@ __decorate([
 ], CustomerController.prototype, "searchCustomersByName", null);
 __decorate([
     (0, common_1.Put)('/:id/toggle-status'),
-    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, roles_guard_1.Roles)('admin'),
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),

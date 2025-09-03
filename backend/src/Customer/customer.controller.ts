@@ -1,12 +1,13 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UsePipes, ValidationPipe, UploadedFile, Res, ParseIntPipe, Query, Patch, UseGuards, Req } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { MailService } from '../Mail/mail.service';
-
+import { Public } from '../Auth/public.decorator';
 import { JwtAuthGuard } from '../Auth/jwtAuth.guard';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { CustomerDto, UpdateCustomerStatusDto } from './customer.dto';
 import { MulterError, diskStorage } from 'multer';
 import { Roles, RolesGuard } from 'src/Auth/roles.guard';
+import { publicDecrypt } from 'crypto';
 
 
 @Controller('customer')
@@ -52,6 +53,7 @@ export class CustomerController {
         }
     }
 
+    @Public()
     @Post('/addcustomer')
     @UsePipes(new ValidationPipe())
     async addCustomer(@Body() customerData: CustomerDto) {
@@ -107,8 +109,6 @@ export class CustomerController {
     }
 
     @Get('/status/inactive')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles('admin')
     async getInactiveCustomers() {
         try {
             const inactiveCustomers = await this.customerService.getInactiveCustomers();
@@ -152,6 +152,7 @@ export class CustomerController {
         };
     }
 
+    // Get customers by age range
     @Get('/age/range')
     async getCustomersByAge(
         @Query('minAge', ParseIntPipe) minAge: number,
@@ -165,7 +166,6 @@ export class CustomerController {
         };
     }
 
-    // Get customers by city
     @Get('/city/:city')
     async getCustomersByCity(@Param('city') city: string) {
         const customers = await this.customerService.getCustomersByCity(city);
@@ -176,7 +176,6 @@ export class CustomerController {
         };
     }
 
-    // Get customers by gender
     @Get('/gender/:gender')
     async getCustomersByGender(@Param('gender') gender: string) {
         const customers = await this.customerService.getCustomersByGender(gender);
@@ -198,8 +197,7 @@ export class CustomerController {
     }
 
     @Put('/:id/toggle-status')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles('admin')
+    @UseGuards(JwtAuthGuard)
     async toggleCustomerStatus(@Param('id', ParseIntPipe) id: number, @Req() req) {
         const user = req.user;
         if (user.role !== 'admin' && user.userId !== id) {

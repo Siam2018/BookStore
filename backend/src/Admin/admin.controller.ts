@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Put, Patch, Delete, Param, Body, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, Res, Query, UseGuards, Request } from '@nestjs/common';
 import { Roles, RolesGuard } from '../Auth/roles.guard';
-// import { Roles, RolesGuard } from '../Auth/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { AdminService } from './admin.service';
