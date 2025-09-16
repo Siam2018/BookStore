@@ -24,14 +24,22 @@ let OrderController = class OrderController {
     constructor(orderService) {
         this.orderService = orderService;
     }
-    async findAll() {
-        return await this.orderService.findAll();
+    async findAll(body, params, req) {
+        if (req.user?.role === 'admin') {
+            return await this.orderService.findAll();
+        }
+        const customerId = req.user?.id || req.user?.customerId;
+        return await this.orderService.findAll(customerId);
     }
-    async findOne(id) {
-        return await this.orderService.findOne(+id);
+    async findOne(id, req) {
+        const customerId = req.user?.id || req.user?.customerId;
+        return await this.orderService.findOne(+id, customerId);
     }
-    async create(dto) {
-        return await this.orderService.create(dto);
+    async create(dto, req) {
+        let customerId = req.user?.id ?? req.user?.customerId ?? req.user?.userId;
+        customerId = Number(customerId);
+        const orderPayload = { ...dto, customerId };
+        return await this.orderService.create(orderPayload);
     }
     async update(id, dto) {
         return await this.orderService.update(+id, dto);
@@ -52,24 +60,32 @@ let OrderController = class OrderController {
 };
 exports.OrderController = OrderController;
 __decorate([
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Post)(),
     (0, common_1.UsePipes)(new common_1.ValidationPipe()),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [order_dto_1.OrderDto]),
+    __metadata("design:paramtypes", [order_dto_1.OrderDto, Object]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "create", null);
 __decorate([

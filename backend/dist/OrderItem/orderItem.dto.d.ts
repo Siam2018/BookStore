@@ -1,7 +1,7 @@
 export declare class OrderItemDto {
-    orderId: number;
+    orderId?: number;
     productId: number;
     quantity: number;
-    price: number;
-    subtotal: number;
+    price?: number;
+    subtotal?: number;
 }

@@ -48,6 +48,27 @@ let CustomerService = class CustomerService {
             return await this.customerRepository.save(customer);
         }
         catch (error) {
+            if (error.code === '23505' && error.detail?.includes('email')) {
+                throw new (require('@nestjs/common').BadRequestException)('Email already exists');
+            }
+            if (error.code === 'ER_DUP_ENTRY' && error.message?.includes('email')) {
+                throw new (require('@nestjs/common').BadRequestException)('Email already exists');
+            }
+            if (error.message?.toLowerCase().includes('duplicate') && error.message?.toLowerCase().includes('email')) {
+                throw new (require('@nestjs/common').BadRequestException)('Email already exists');
+            }
+            if (error.message?.toLowerCase().includes('not null') && error.message?.toLowerCase().includes('full name')) {
+                throw new (require('@nestjs/common').BadRequestException)('Full name is required');
+            }
+            if (error.message?.toLowerCase().includes('not null') && error.message?.toLowerCase().includes('email')) {
+                throw new (require('@nestjs/common').BadRequestException)('Email is required');
+            }
+            if (error.message?.toLowerCase().includes('not null') && error.message?.toLowerCase().includes('password')) {
+                throw new (require('@nestjs/common').BadRequestException)('Password is required');
+            }
+            if (error.message?.toLowerCase().includes('invalid input syntax for type date')) {
+                throw new (require('@nestjs/common').BadRequestException)('Date of birth must be a valid date (YYYY-MM-DD)');
+            }
             throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to add customer', error.status || 500);
         }
     }
@@ -56,6 +77,9 @@ let CustomerService = class CustomerService {
             return await this.customerRepository.find();
         }
         catch (error) {
+            if (error.message?.toLowerCase().includes('not found')) {
+                throw new (require('@nestjs/common').NotFoundException)('No customers found');
+            }
             throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get all customers', error.status || 500);
         }
     }
@@ -63,11 +87,14 @@ let CustomerService = class CustomerService {
         try {
             const customer = await this.customerRepository.findOneBy({ id: id });
             if (!customer) {
-                throw new common_1.NotFoundException(`Customer with ID ${id} not found`);
+                throw new (require('@nestjs/common').NotFoundException)(`Customer with ID ${id} not found`);
             }
             return customer;
         }
         catch (error) {
+            if (error.message?.toLowerCase().includes('not found')) {
+                throw new (require('@nestjs/common').NotFoundException)(`Customer with ID ${id} not found`);
+            }
             throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get customer by ID', error.status || 500);
         }
     }
@@ -78,6 +105,9 @@ let CustomerService = class CustomerService {
             return await this.customerRepository.save(customer);
         }
         catch (error) {
+            if (error.message?.toLowerCase().includes('not found')) {
+                throw new (require('@nestjs/common').NotFoundException)(`Customer with ID ${id} not found`);
+            }
             throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to update customer status', error.status || 500);
         }
     }
@@ -92,12 +122,17 @@ let CustomerService = class CustomerService {
         }
     }
     async getCustomersOlderThan(minAge) {
-        const currentDate = new Date();
-        const cutoffDate = new Date(currentDate.getFullYear() - minAge, currentDate.getMonth(), currentDate.getDate());
-        return await this.customerRepository.createQueryBuilder('customer')
-            .where('customer.dateOfBirth < :date', { date: cutoffDate })
-            .andWhere('customer.dateOfBirth IS NOT NULL')
-            .getMany();
+        try {
+            const currentDate = new Date();
+            const cutoffDate = new Date(currentDate.getFullYear() - minAge, currentDate.getMonth(), currentDate.getDate());
+            return await this.customerRepository.createQueryBuilder('customer')
+                .where('customer.dateOfBirth < :date', { date: cutoffDate })
+                .andWhere('customer.dateOfBirth IS NOT NULL')
+                .getMany();
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get customers older than specified age', error.status || 500);
+        }
     }
     async getCustomersOlderThan40() {
         return this.getCustomersOlderThan(40);
@@ -118,40 +153,83 @@ let CustomerService = class CustomerService {
         return await query.getMany();
     }
     async getCustomersByCity(city) {
-        return await this.customerRepository.find({
-            where: { city }
-        });
+        try {
+            return await this.customerRepository.find({
+                where: { city }
+            });
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to get customers from city: ${city}`, error.status || 500);
+        }
     }
     async getCustomersByGender(gender) {
-        return await this.customerRepository.find({
-            where: { gender }
-        });
+        try {
+            return await this.customerRepository.find({
+                where: { gender }
+            });
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to get customers by gender: ${gender}`, error.status || 500);
+        }
     }
     async searchCustomersByName(searchTerm) {
-        return await this.customerRepository.createQueryBuilder('customer')
-            .where('customer.fullName ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
-            .getMany();
+        try {
+            return await this.customerRepository.createQueryBuilder('customer')
+                .where('customer.fullName ILIKE :searchTerm', { searchTerm: `%${searchTerm}%` })
+                .getMany();
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to search customers by name: ${searchTerm}`, error.status || 500);
+        }
     }
     async updateCustomer(id, updateData) {
-        await this.customerRepository.update(id, updateData);
-        const updatedCustomer = await this.customerRepository.findOneBy({ id: id });
-        if (!updatedCustomer) {
-            throw new common_1.NotFoundException(`Customer with ID ${id} not found after update`);
+        try {
+            if (updateData.password) {
+                const bcrypt = require('bcrypt');
+                const saltRounds = 10;
+                updateData.password = await bcrypt.hash(updateData.password, saltRounds);
+            }
+            await this.customerRepository.update(id, updateData);
+            const updatedCustomer = await this.customerRepository.findOneBy({ id: id });
+            if (!updatedCustomer) {
+                throw new (require('@nestjs/common').NotFoundException)(`Customer with ID ${id} not found after update`);
+            }
+            if (updatedCustomer) {
+                updatedCustomer.password = '';
+            }
+            return updatedCustomer;
         }
-        return updatedCustomer;
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to update customer with ID ${id}`, error.status || 500);
+        }
     }
     async updateCustomerImage(id, imageURL) {
-        const customer = await this.getCustomerById(id);
-        customer.imageURL = imageURL;
-        return await this.customerRepository.save(customer);
+        try {
+            const customer = await this.getCustomerById(id);
+            customer.imageURL = imageURL;
+            return await this.customerRepository.save(customer);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to update image for customer with ID ${id}`, error.status || 500);
+        }
     }
     async deleteCustomer(id) {
-        await this.customerRepository.delete(id);
+        try {
+            await this.customerRepository.delete(id);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to delete customer with ID ${id}`, error.status || 500);
+        }
     }
     async toggleCustomerStatus(id) {
-        const customer = await this.getCustomerById(id);
-        customer.status = customer.status === 'active' ? 'inactive' : 'active';
-        return await this.customerRepository.save(customer);
+        try {
+            const customer = await this.getCustomerById(id);
+            customer.status = customer.status === 'active' ? 'inactive' : 'active';
+            return await this.customerRepository.save(customer);
+        }
+        catch (error) {
+            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || `Failed to toggle status for customer with ID ${id}`, error.status || 500);
+        }
     }
     calculateAge(dateOfBirth) {
         const today = new Date();

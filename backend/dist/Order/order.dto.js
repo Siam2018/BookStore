@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderDto = void 0;
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
+const orderItem_dto_1 = require("../OrderItem/orderItem.dto");
 class OrderDto {
     id;
     customerId;
@@ -28,11 +30,13 @@ __decorate([
 ], OrderDto.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)({}, { message: 'Customer ID must be a number' }),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Customer ID is required' }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], OrderDto.prototype, "customerId", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => orderItem_dto_1.OrderItemDto),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], OrderDto.prototype, "orderItems", void 0);

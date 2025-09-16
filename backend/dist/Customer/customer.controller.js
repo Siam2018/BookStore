@@ -13,6 +13,8 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerController = void 0;
+const path_1 = require("path");
+const fs_1 = require("fs");
 const common_1 = require("@nestjs/common");
 const customer_service_1 = require("./customer.service");
 const mail_service_1 = require("../Mail/mail.service");
@@ -195,22 +197,28 @@ let CustomerController = class CustomerController {
         if (!file) {
             return { message: 'No file uploaded', status: 'error' };
         }
-        const imageURL = `/uploads/customers/${file.filename}`;
-        const updated = await this.customerService.updateCustomerImage(id, imageURL);
+        const imageFilename = file.filename;
+        const updated = await this.customerService.updateCustomerImage(id, imageFilename);
         return {
             message: 'Customer image uploaded successfully',
             data: updated,
             status: 'success',
-            imageURL,
+            imageFilename,
         };
     }
-    async getCustomerImage(id, res) {
-        const imagePath = await this.customerService.getCustomerImagePath(id);
-        if (!imagePath) {
-            return res.status(404).json({ message: 'No image found for this customer.' });
+    async getCustomerImage(imageURL, res) {
+        if (!imageURL) {
+            return res.status(400).json({ message: 'No imageURL provided.' });
         }
-        const normalizedPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+        const normalizedPath = imageURL.startsWith('/') ? imageURL.slice(1) : imageURL;
         return res.sendFile(normalizedPath, { root: './' });
+    }
+    async serveCustomerImage(filename, res) {
+        const filePath = (0, path_1.join)(process.cwd(), 'uploads', 'customers', filename);
+        if (!(0, fs_1.existsSync)(filePath)) {
+            return res.status(404).json({ message: 'Image not found.' });
+        }
+        return res.sendFile(filePath);
     }
 };
 exports.CustomerController = CustomerController;
@@ -356,13 +364,23 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "uploadImage", null);
 __decorate([
-    (0, common_1.Get)('/:id/image'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Get)('/image'),
+    __param(0, (0, common_1.Query)('imageURL')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], CustomerController.prototype, "getCustomerImage", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Get)('/uploads/customers/:filename'),
+    __param(0, (0, common_1.Param)('filename')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CustomerController.prototype, "serveCustomerImage", null);
 exports.CustomerController = CustomerController = __decorate([
     (0, common_1.Controller)('customer'),
     __metadata("design:paramtypes", [customer_service_1.CustomerService,

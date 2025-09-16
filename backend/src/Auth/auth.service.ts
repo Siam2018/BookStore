@@ -14,7 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(identifier: string, pass: string): Promise<AdminEntity | CustomerEntity | null> {
+  async validateUser(identifier: string, pass: string): Promise<AdminEntity | CustomerEntity> {
     // Try admin by username
     let admin: AdminEntity | null = null;
     try {
@@ -39,14 +39,30 @@ export class AuthService {
       const { password, ...result } = customer as any;
       return result;
     }
-    return null;
+    throw new (require('@nestjs/common').UnauthorizedException)('Invalid credentials');
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
-    return {
-      access_token: this.jwtService.sign(payload),
-      role: user.role,
-    };
+    try {
+      if (!user || !user.email || !user.id || !user.role) {
+        throw new (require('@nestjs/common').UnauthorizedException)('Invalid user data');
+      }
+      const payload = {
+        email: user.email,
+        sub: user.id,
+        role: user.role,
+        fullName: user.fullName || user.name || user.username || '',
+        imageURL: user.imageURL || '',
+      };
+      return {
+        access_token: this.jwtService.sign(payload),
+        role: user.role,
+      };
+    } catch (error) {
+      throw new (error.constructor || require('@nestjs/common').HttpException)(
+        error.message || 'Login failed',
+        error.status || 401
+      );
+    }
   }
 }

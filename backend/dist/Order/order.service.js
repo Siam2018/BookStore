@@ -14,43 +14,73 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrderService = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const order_entity_1 = require("./order.entity");
+const orderItem_service_1 = require("../OrderItem/orderItem.service");
+const Pusher = require('pusher');
+const pusher = new Pusher({
+    appId: process.env.PUSHER_APP_ID,
+    key: process.env.PUSHER_KEY,
+    secret: process.env.PUSHER_SECRET,
+    cluster: process.env.PUSHER_CLUSTER,
+    useTLS: true,
+});
 let OrderService = class OrderService {
     orderRepository;
-    constructor(orderRepository) {
+    orderItemService;
+    configService;
+    pusher;
+    constructor(orderRepository, orderItemService, configService) {
         this.orderRepository = orderRepository;
+        this.orderItemService = orderItemService;
+        this.configService = configService;
+        const Pusher = require('pusher');
+        this.pusher = new Pusher({
+            appId: this.configService.get('PUSHER_APP_ID'),
+            key: this.configService.get('PUSHER_KEY'),
+            secret: this.configService.get('PUSHER_SECRET'),
+            cluster: this.configService.get('PUSHER_CLUSTER'),
+            useTLS: true,
+        });
     }
-    async findAll() {
-        try {
-            return await this.orderRepository.find({ relations: ['orderItems', 'customer'] });
-        }
-        catch (error) {
-            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get all orders', error.status || 500);
-        }
+    async findAll(customerId) {
+        return await this.orderRepository.find({ where: { customerId }, relations: ['orderItems', 'customer'] });
     }
-    async findOne(id) {
-        try {
-            const order = await this.orderRepository.findOne({ where: { id }, relations: ['orderItems', 'customer'] });
-            if (!order)
-                throw new common_1.NotFoundException('Order not found');
-            return order;
-        }
-        catch (error) {
-            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to get order', error.status || 500);
-        }
+    async findOne(id, customerId) {
+        const order = await this.orderRepository.findOne({ where: { id, customerId }, relations: ['orderItems', 'customer'] });
+        if (!order)
+            throw new common_1.NotFoundException('Order not found');
+        return order;
     }
     async create(dto) {
         try {
-            const { customerId, status } = dto;
+            let { customerId, status, orderItems } = dto;
+            if (orderItems && Array.isArray(orderItems) && orderItems.length > 0) {
+                for (const item of orderItems) {
+                    await this.orderItemService.checkProductStock(item.productId, item.quantity);
+                }
+            }
             const order = this.orderRepository.create({ customerId, status, total: 0 });
             const savedOrder = await this.orderRepository.save(order);
+            if (orderItems && Array.isArray(orderItems) && orderItems.length > 0) {
+                const itemsWithOrderId = orderItems.map(item => ({ ...item, orderId: savedOrder.id }));
+                if (this['orderItemService']) {
+                    await this['orderItemService'].createMany(itemsWithOrderId);
+                }
+                else {
+                    throw new Error('OrderItemService not injected');
+                }
+            }
             savedOrder.total = await this.calculateOrderTotal(savedOrder.id);
+            if (savedOrder.status === 'pending') {
+                await this.pusher.trigger('orders', 'pending-order', { orderId: savedOrder.id });
+            }
             return this.orderRepository.save(savedOrder);
         }
         catch (error) {
-            throw new (error.constructor || require('@nestjs/common').HttpException)(error.message || 'Failed to create order', error.status || 500);
+            throw new (error.constructor || require('@nestjs/common').BadRequestException)(error.message || 'Failed to create order', error.status || 400);
         }
     }
     async update(id, dto) {
@@ -93,6 +123,9 @@ exports.OrderService = OrderService;
 exports.OrderService = OrderService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(order_entity_1.OrderEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, common_1.Inject)((0, common_1.forwardRef)(() => orderItem_service_1.OrderItemService))),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        orderItem_service_1.OrderItemService,
+        config_1.ConfigService])
 ], OrderService);
 //# sourceMappingURL=order.service.js.map

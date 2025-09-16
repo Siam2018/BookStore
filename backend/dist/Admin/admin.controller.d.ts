@@ -4,7 +4,7 @@ export declare class AdminController {
     private readonly adminService;
     updateByUsername(username: string, updateData: Partial<AdminDto>): Promise<import("./admin.entity").AdminEntity | null>;
     constructor(adminService: AdminService);
-    create(dto: AdminDto, req: any): Promise<import("./admin.entity").AdminEntity>;
+    create(dto: AdminDto): Promise<import("./admin.entity").AdminEntity>;
     findAll(fullName?: string): Promise<import("./admin.entity").AdminEntity[]>;
     findByUsername(username: string): Promise<import("./admin.entity").AdminEntity>;
     removeByUsername(username: string): Promise<{

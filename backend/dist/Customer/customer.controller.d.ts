@@ -78,12 +78,13 @@ export declare class CustomerController {
         message: string;
         status: string;
         data?: undefined;
-        imageURL?: undefined;
+        imageFilename?: undefined;
     } | {
         message: string;
         data: import("./customer.entity").CustomerEntity;
         status: string;
-        imageURL: string;
+        imageFilename: string;
     }>;
-    getCustomerImage(id: number, res: any): Promise<any>;
+    getCustomerImage(imageURL: string, res: any): Promise<any>;
+    serveCustomerImage(filename: string, res: any): Promise<any>;
 }

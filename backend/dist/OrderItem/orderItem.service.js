@@ -28,6 +28,15 @@ let OrderItemService = class OrderItemService {
         this.productRepository = productRepository;
         this.orderService = orderService;
     }
+    async checkProductStock(productId, quantity) {
+        const product = await this.productRepository.findOne({ where: { id: productId } });
+        if (!product) {
+            throw new common_1.NotFoundException(`Product with id ${productId} not found`);
+        }
+        if (product.stock < quantity) {
+            throw new common_1.NotFoundException(`Not enough stock for product ${product.name}`);
+        }
+    }
     async findAll() {
         try {
             return await this.orderItemRepository.find();
@@ -155,6 +164,7 @@ exports.OrderItemService = OrderItemService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(orderItem_entity_1.OrderItem)),
     __param(1, (0, typeorm_1.InjectRepository)(product_entity_1.ProductEntity)),
+    __param(2, (0, common_1.Inject)((0, common_1.forwardRef)(() => order_service_1.OrderService))),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         order_service_1.OrderService])

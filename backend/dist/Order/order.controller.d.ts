@@ -3,9 +3,9 @@ import { OrderDto } from './order.dto';
 export declare class OrderController {
     private readonly orderService;
     constructor(orderService: OrderService);
-    findAll(): Promise<import("./order.entity").OrderEntity[]>;
-    findOne(id: string): Promise<import("./order.entity").OrderEntity>;
-    create(dto: OrderDto): Promise<import("./order.entity").OrderEntity>;
+    findAll(body: any, params: any, req: any): Promise<import("./order.entity").OrderEntity[]>;
+    findOne(id: string, req: any): Promise<import("./order.entity").OrderEntity>;
+    create(dto: OrderDto, req: any): Promise<import("./order.entity").OrderEntity>;
     update(id: string, dto: OrderDto): Promise<import("./order.entity").OrderEntity>;
     patch(id: string, dto: Partial<OrderDto>): Promise<import("./order.entity").OrderEntity>;
     remove(id: string): Promise<{

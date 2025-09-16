@@ -8,6 +8,7 @@ export declare class OrderItemService {
     private readonly productRepository;
     private readonly orderService;
     constructor(orderItemRepository: Repository<OrderItem>, productRepository: Repository<ProductEntity>, orderService: OrderService);
+    checkProductStock(productId: number, quantity: number): Promise<void>;
     findAll(): Promise<OrderItem[]>;
     findOne(id: number): Promise<OrderItem>;
     create(dto: OrderItemDto): Promise<OrderItem>;

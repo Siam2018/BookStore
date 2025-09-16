@@ -22,7 +22,7 @@ exports.OrderItemDto = OrderItemDto;
 __decorate([
     (0, class_validator_1.IsNumber)({}, { message: 'Order ID must be a number' }),
     (0, class_validator_1.IsPositive)({ message: 'Order ID must be positive' }),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Order ID is required' }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "orderId", void 0);
 __decorate([
@@ -40,13 +40,13 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNumber)({}, { message: 'Price must be a number' }),
     (0, class_validator_1.IsPositive)({ message: 'Price must be positive' }),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Price is required' }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "price", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)({}, { message: 'Subtotal must be a number' }),
     (0, class_validator_1.IsPositive)({ message: 'Subtotal must be positive' }),
-    (0, class_validator_1.IsNotEmpty)({ message: 'Subtotal is required' }),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], OrderItemDto.prototype, "subtotal", void 0);
 //# sourceMappingURL=orderItem.dto.js.map
